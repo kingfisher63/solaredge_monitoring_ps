@@ -107,7 +107,7 @@ The table below lists the *SolarEdge.Monitoring.Api* functions and their *SolarE
 
 (1) No sample data available. Possible future addition.  
 (2) Data is too complex for simple text representation. Use *Export-SolarEdgeInverterData* to export data to a CSV file.  
-(3) Only inverter data is fully decoded as no sample data was available for batteries, gateways, meters en sensors.
+(3) Only inverter and meter data is fully decoded as no sample data was available for batteries, gateways and sensors.
 
 ## Module SolarEdge.Monitoring.Export
 
