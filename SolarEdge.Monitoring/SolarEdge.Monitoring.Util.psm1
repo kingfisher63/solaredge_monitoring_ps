@@ -469,28 +469,28 @@ function Write-SolarEdgeSiteInventory
             $inventory = $_siteInventory.siteInventory
 
             Write-Output "Summary"
-            Write-Output "  Site ID       : $($_siteInventory.siteId)"
-            Write-Output "  Inverters     : $($inventory.inverters.count)"
-            Write-Output "  Batteries     : $($inventory.batteries.count)"
-            Write-Output "  Gateways      : $($inventory.gateways.count)"
-            Write-Output "  Meters        : $($inventory.meters.count)"
-            Write-Output "  Sensors       : $($inventory.sensors.count)"
+            Write-Output "  Site ID          : $($_siteInventory.siteId)"
+            Write-Output "  Inverters        : $($inventory.inverters.count)"
+            Write-Output "  Batteries        : $($inventory.batteries.count)"
+            Write-Output "  Gateways         : $($inventory.gateways.count)"
+            Write-Output "  Meters           : $($inventory.meters.count)"
+            Write-Output "  Sensors          : $($inventory.sensors.count)"
 
             $nitems = 0
             foreach ($_inverter in $inventory.inverters) {
                 ++$nitems
 
                 Write-Output "Inverter #$nitems"
-                Write-Output "  Name          : $($_inverter.name)"
-                Write-Output "  Manufacturer  : $($_inverter.manufacturer)"
-                Write-Output "  Model         : $($_inverter.model)"
-                Write-Output "  Part number   : $($_inverter.partNumber)"
-                Write-Output "  Serial number : $($_inverter.SN)"
-                Write-Output "  CPU version   : $($_inverter.cpuVersion)"
-                Write-Output "  DSP1 version  : $($_inverter.dsp1Version)"
-                Write-Output "  DSP2 version  : $($_inverter.dsp2Version)"
-                Write-Output "  Communication : $($_inverter.communicationMethod)"
-                Write-Output "  Optimizers    : $($_inverter.connectedOptimizers)"
+                Write-Output "  Name             : $($_inverter.name)"
+                Write-Output "  Manufacturer     : $($_inverter.manufacturer)"
+                Write-Output "  Model            : $($_inverter.model)"
+                Write-Output "  Part number      : $($_inverter.partNumber)"
+                Write-Output "  Serial number    : $($_inverter.SN)"
+                Write-Output "  CPU version      : $($_inverter.cpuVersion)"
+                Write-Output "  DSP1 version     : $($_inverter.dsp1Version)"
+                Write-Output "  DSP2 version     : $($_inverter.dsp2Version)"
+                Write-Output "  Communication    : $($_inverter.communicationMethod)"
+                Write-Output "  Optimizers       : $($_inverter.connectedOptimizers)"
             }
 
             $nitems = 0
@@ -511,7 +511,16 @@ function Write-SolarEdgeSiteInventory
             foreach ($_meter in $inventory.meters) {
                 ++$nitems
 
-                Write-Output "Meter #$nitems (properties TODO)"
+                Write-Output "Meter #$nitems"
+                Write-Output "  Name             : $($_meter.name)"
+                Write-Output "  Type             : $($_meter.type)"
+                Write-Output "  Form             : $($_meter.form)"
+                if ($_meter.form -eq "physical") {
+                    Write-Output "  Model            : $($_meter.model)"
+                    Write-Output "  Serial number    : $($_meter.SN)"
+                    Write-Output "  Firmware version : $($_meter.firmwareVersion)"
+                }
+                Write-Output "  Connected to     : $($_meter.connectedTo) ($($_meter.connectedSolaredgeDeviceSN))"
             }
 
             $nitems = 0
