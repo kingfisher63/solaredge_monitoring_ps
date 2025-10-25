@@ -40,7 +40,7 @@ The function *Get-SolarEdgeSiteDataPeriod* will for example return (JSON)
 #### APIs Supported
 
 | API                         | API Endpoint                                     | Function                        | Notes |
-| :-------------------------- | :----------------------------------------------- | :------------------------------ | :---: |
+|:--------------------------- |:------------------------------------------------ |:------------------------------- |:-----:|
 | API Version                 | /version/current                                 | Get-SolaredgeApiInfo            | 1     |
 | API Versions Supported      | /version/supported                               | Get-SolaredgeApiInfo            | 1     |
 | Equipment Change Log        | /equipment/&lt;site&gt;/&lt;serial&gt;/changeLog | Get-SolarEdgeEquipmentChangeLog |       |
@@ -69,7 +69,7 @@ The function *Get-SolarEdgeSiteDataPeriod* will for example return (JSON)
 #### APIs not supported
 
 | API                  | API Endpoint                      | Reason                                          |
-| ---------------------| --------------------------------- | ----------------------------------------------- |
+|:-------------------- |:--------------------------------- |:----------------------------------------------- |
 | Account List         | /accounts/list                    | API returns HTTP 403 (forbidden)                |
 | Component List       | /equipment/&lt;site&gt;/list      | Inventory API returns more detailed information |
 | Installer Logo Image | /site/&lt;site&gt;/installerImage | Possible future addition                        |
@@ -84,7 +84,7 @@ This nested module contains functions to produce human readable text from select
 The table below lists the *SolarEdge.Monitoring.Api* functions and their *SolarEdge.Monitoring.Util* counterparts (where applicable).
 
 | SolarEdge.Monitoring.Api function | SolarEdge.Monitoring.Util function | Notes |
-| --------------------------------- | ---------------------------------- | ----- |
+|:--------------------------------- |:---------------------------------- |:-----:|
 | Get-SolarEdgeApiInfo              | Write-SolarEdgeApiInfo             |       |
 | Get-SolarEdgeEquipmentChangeLog   | *not implemented*                  | 1     |
 | Get-SolarEdgeInverterData         | *not implemented*                  | 2     |
