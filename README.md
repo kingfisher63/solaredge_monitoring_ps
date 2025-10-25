@@ -39,10 +39,7 @@ The function *Get-SolarEdgeSiteDataPeriod* will for example return (JSON)
 
 #### APIs Supported
 
-<<<<<<< HEAD
 <div  style="overflow-x: scroll;">
-=======
->>>>>>> f66c019971003cb6429e7c8e5199ed11ca413fb1
 |API|API&nbsp;Endpoint|Function|Notes|
 |:---|:---|:---|:---:|
 |API&nbsp;Version|/version/current|Get-SolaredgeApiInfo|1|
@@ -65,10 +62,7 @@ The function *Get-SolarEdgeSiteDataPeriod* will for example return (JSON)
 |Site&nbsp;Power&nbsp;(details)|/site/&lt;site&gt;/powerDetails|Get-SolarEdgeSitePowerDetails||
 |Site&nbsp;Power&nbsp;Flow|/site/&lt;site&gt;/currentPowerFlow|Get-SolarEdgeSitePowerFlow||
 |Storage&nbsp;Information|/site/&lt;site&gt;/storageData|Get-SolarEdgeStorageData||
-<<<<<<< HEAD
 </div>
-=======
->>>>>>> f66c019971003cb6429e7c8e5199ed11ca413fb1
 
 (1) Result object does not have a *siteId* property.  
 (2) This function returns an array of *siteDetails* style objects.  
