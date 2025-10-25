@@ -39,28 +39,28 @@ The function *Get-SolarEdgeSiteDataPeriod* will for example return (JSON)
 
 #### APIs Supported
 
-| API                         | API Endpoint                                     | Function                        | Notes |
-| --------------------------- | ------------------------------------------------ | --------------------------------|-------|
-| API Version                 | /version/current                                 | Get-SolaredgeApiInfo            | 1     |
-| API Versions Supported      | /version/supported                               | Get-SolaredgeApiInfo            | 1     |
-| Equipment Change Log        | /equipment/&lt;site&gt;/&lt;serial&gt;/changeLog | Get-SolarEdgeEquipmentChangeLog |       |
-| Inverter Technical Data     | /equipment/&lt;site&gt;/&lt;serial&gt;/data      | Get-SolarEdgeInverterData       |       |
-| Inventory                   | /site/&lt;site&gt;/inventory                     | Get-SolarEdgeSiteInventory      |       |
-| Get Meter Data              | /site/&lt;site&gt;/meters                        | Get-SolarEdgeMeterData          |       |
-| Get Sensor Data             | /equipment/&lt;site&gt;/sensors                  | Get-SolarEdgeSensorData         |       |
-| Get Sensor List             | /equipment/&lt;site&gt;/sensors                  | Get-SolarEdgeSensorList         |       |
-| Site Data                   | /sites/&lt;site_list&gt;/dataPeriod              | Get-SolarEdgeSiteDataPeriod     |       |
-| Site Details                | /site/&lt;site&gt;/details                       | Get-SolarEdgeSiteDetails        |       |
-| Site Energy                 | /sites/&lt;site_list&gt;/energy                  | Get-SolarEdgeSiteEnergy         |       |
-| Site Energy (details)       | /site/&lt;site&gt;/energyDetails                 | Get-SolarEdgeSiteEnergyDetails  |       |
-| Site Energy (time frame)    | /sites/&lt;site_list&gt;/timeframeEnergy         | Get-SolarEdgeSiteEnergySummary  |       |
-| Site Environmental Benefits | /site/&lt;site&gt;/envBenefits                   | Get-SolarEdgeSiteEnvBenefits    |       |
-| Site List                   | /sites/list                                      | Get-SolarEdgeSiteList           | 2, 3  |
-| Site Overview               | /sites/&lt;site_list&gt;/overview                | Get-SolarEdgeSiteOverview       |       |
-| Site Power                  | /sites/&lt;site_list&gt;/power                   | Get-SolarEdgeSitePower          |       |
-| Site Power (details)        | /site/&lt;site&gt;/powerDetails                  | Get-SolarEdgeSitePowerDetails   |       |
-| Site Power Flow             | /site/&lt;site&gt;/currentPowerFlow              | Get-SolarEdgeSitePowerFlow      |       |
-| Storage Information         | /site/&lt;site&gt;/storageData                   | Get-SolarEdgeStorageData        |       |
+|API|API&nbsp;Endpoint|Function|Notes|
+|:---|:---|:---|:---:|
+|API&nbsp;Version|/version/current|Get-SolaredgeApiInfo|1|
+|API&nbsp;Versions&nbsp;Supported|/version/supported|Get-SolaredgeApiInfo|1|
+|Equipment&nbsp;Change&nbsp;Log|/equipment/&lt;site&gt;/&lt;serial&gt;/changeLog|Get-SolarEdgeEquipmentChangeLog||
+|Inverter&nbsp;Technical&nbsp;Data|/equipment/&lt;site&gt;/&lt;serial&gt;/data|Get-SolarEdgeInverterData||
+|Inventory|/site/&lt;site&gt;/inventory|Get-SolarEdgeSiteInventory||
+|Get&nbsp;Meter&nbsp;Data|/site/&lt;site&gt;/meters|Get-SolarEdgeMeterData||
+|Get&nbsp;Sensor&nbsp;Data|/equipment/&lt;site&gt;/sensors|Get-SolarEdgeSensorData||
+|Get&nbsp;Sensor&nbsp;List|/equipment/&lt;site&gt;/sensors|Get-SolarEdgeSensorList||
+|Site&nbsp;Data|/sites/&lt;site_list&gt;/dataPeriod|Get-SolarEdgeSiteDataPeriod||
+|Site&nbsp;Details|/site/&lt;site&gt;/details|Get-SolarEdgeSiteDetails||
+|Site&nbsp;Energy|/sites/&lt;site_list&gt;/energy|Get-SolarEdgeSiteEnergy||
+|Site&nbsp;Energy&nbsp;(details)|/site/&lt;site&gt;/energyDetails|Get-SolarEdgeSiteEnergyDetails||
+|Site&nbsp;Energy&nbsp;(time&nbsp;frame)|/sites/&lt;site_list&gt;/timeframeEnergy|Get-SolarEdgeSiteEnergySummary||
+|Site&nbsp;Environmental&nbsp;Benefits|/site/&lt;site&gt;/envBenefits|Get-SolarEdgeSiteEnvBenefits||
+|Site&nbsp;List|/sites/list|Get-SolarEdgeSiteList|2,3|
+|Site&nbsp;Overview|/sites/&lt;site_list&gt;/overview|Get-SolarEdgeSiteOverview||
+|Site&nbsp;Power|/sites/&lt;site_list&gt;/power|Get-SolarEdgeSitePower||
+|Site&nbsp;Power&nbsp;(details)|/site/&lt;site&gt;/powerDetails|Get-SolarEdgeSitePowerDetails||
+|Site&nbsp;Power&nbsp;Flow|/site/&lt;site&gt;/currentPowerFlow|Get-SolarEdgeSitePowerFlow||
+|Storage&nbsp;Information|/site/&lt;site&gt;/storageData|Get-SolarEdgeStorageData||
 
 (1) Result object does not have a *siteId* property.  
 (2) This function returns an array of *siteDetails* style objects.  
