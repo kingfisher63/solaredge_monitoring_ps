@@ -53,7 +53,7 @@ function GetApiData
         }
     }
 
-    $json = (Invoke-WebRequest $url).RawContentStream.ToArray()
+    $json = (Invoke-WebRequest -UseBasicParsing $url).RawContentStream.ToArray()
     $data = [Encoding]::UTF8.GetString($json) | ConvertFrom-Json
 
     return $data
