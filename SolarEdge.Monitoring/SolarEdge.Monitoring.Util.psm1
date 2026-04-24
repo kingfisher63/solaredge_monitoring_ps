@@ -25,7 +25,7 @@ function GetValueFieldWidth
     $width = 0;
 
     foreach ($_object in $objects) {
-        if (PropertyExistsAndNotNull $_object value) {
+        if (PropertyExistsAndIsNotNull $_object value) {
             $length = $_object.value.ToString('F1').Length
         } else {
             $length = 3
@@ -49,7 +49,7 @@ function PropertyExists
     return ($object | Get-Member -Name $propertyName)
 }
 
-function PropertyExistsAndNotNull
+function PropertyExistsAndIsNotNull
 {
     param (
         [Object] $object,
@@ -124,8 +124,8 @@ function Write-SolarEdgeMeterData
 
     process {
         foreach ($_meterData in $MeterData) {
-            if (-not (PropertyExists $_meterData meterData)) {
-                throw "Invalid MeterData object (property 'meterData' does not exist)"
+            if (-not (PropertyExistsAndIsNotNull $_meterData meterData)) {
+                throw "Invalid MeterData object (property 'meterData' does not exist or is null)"
             }
 
             $meterDataTable = $null
@@ -207,8 +207,8 @@ function Write-SolarEdgeSiteDataPeriod
 
     process {
         foreach ($_siteDataPeriod in $SiteDataPeriod) {
-            if (-not (PropertyExists $_siteDataPeriod siteDataPeriod)) {
-                throw "Invalid SiteDataPeriod object (property 'siteDataPeriod' does not exist)"
+            if (-not (PropertyExistsAndIsNotNull $_siteDataPeriod siteDataPeriod)) {
+                throw "Invalid SiteDataPeriod object (property 'siteDataPeriod' does not exist or is null)"
             }
 
             if (++$n -gt 1) {
@@ -245,8 +245,8 @@ function Write-SolarEdgeSiteDetails
 
     process {
         foreach ($_siteDetails in $SiteDetails) {
-            if (-not (PropertyExists $_siteDetails siteDetails)) {
-                throw "Invalid SiteDetails object (property 'siteDetails' does not exist)"
+            if (-not (PropertyExistsAndIsNotNull $_siteDetails siteDetails)) {
+                throw "Invalid SiteDetails object (property 'siteDetails' does not exist or is null)"
             }
 
             if (++$n -gt 1) {
@@ -283,13 +283,13 @@ function Write-SolarEdgeSiteDetails
             if ($module.manufacturerName) {
                 Write-Output "Primary module : $($module.manufacturerName), $($module.modelName), $($module.maximumPower) Wp, $($module.temperatureCoef) %/C"
             }
-            if (PropertyExists $details status) {
+            if (PropertyExistsAndIsNotNull $details status) {
                 Write-Output "Status         : $($details.status)"
             }
-            if (PropertyExists $details alertQuantity) {
+            if (PropertyExistsAndIsNotNull $details alertQuantity) {
                 Write-Output "Alert quantity : $($details.alertQuantity)"
             }
-            if (PropertyExists $details highestImpact) {
+            if (PropertyExistsAndIsNotNull $details highestImpact) {
                 Write-Output "Highest impact : $($details.highestImpact)"
             }
                 Write-Output "Public site    : $($isPublic)"
@@ -323,8 +323,8 @@ function Write-SolarEdgeSiteEnergy
 
     process {
         foreach ($_siteEnergy in $SiteEnergy) {
-            if (-not (PropertyExists $_siteEnergy siteEnergy)) {
-                throw "Invalid SiteEnergy object (property 'siteEnergy' does not exist)"
+            if (-not (PropertyExistsAndIsNotNull $_siteEnergy siteEnergy)) {
+                throw "Invalid SiteEnergy object (property 'siteEnergy' does not exist or is null)"
             }
 
             $dateColumn           = [System.Data.DataColumn]::new('Date')
@@ -390,8 +390,8 @@ function Write-SolarEdgeSiteEnergyDetails
 
     process {
         foreach ($_siteEnergyDetails in $SiteEnergyDetails) {
-            if (-not (PropertyExists $_siteEnergyDetails siteEnergyDetails)) {
-                throw "Invalid SiteEnergyDetails object (property 'siteEnergyDetails' does not exist)"
+            if (-not (PropertyExistsAndIsNotNull $_siteEnergyDetails siteEnergyDetails)) {
+                throw "Invalid SiteEnergyDetails object (property 'siteEnergyDetails' does not exist or is null)"
             }
 
             $energyTable = $null
@@ -399,7 +399,7 @@ function Write-SolarEdgeSiteEnergyDetails
             foreach ($_meter in $_siteEnergyDetails.siteEnergyDetails.meters) {
                 $meterHasData = $false
                 foreach ($_value in $_meter.values) {
-                    if (PropertyExistsAndNotNull $_value value) {
+                    if (PropertyExistsAndIsNotNull $_value value) {
                         $meterHasData = $true
                         break
                     }
@@ -480,8 +480,8 @@ function Write-SolarEdgeSiteEnergySummary
 
     process {
         foreach ($_siteEnergySummary in $SiteEnergySummary) {
-            if (-not (PropertyExists $_siteEnergySummary siteEnergySummary)) {
-                throw "Invalid SiteEnergySummary object (property 'siteEnergySummary' does not exist)"
+            if (-not (PropertyExistsAndIsNotNull $_siteEnergySummary siteEnergySummary)) {
+                throw "Invalid SiteEnergySummary object (property 'siteEnergySummary' does not exist or is null)"
             }
 
             if (++$n -gt 1) {
@@ -523,8 +523,8 @@ function Write-SolarEdgeSiteEnvBenefits
 
     process {
         foreach ($_siteEnvBenefits in $SiteEnvBenefits) {
-            if (-not (PropertyExists $_siteEnvBenefits siteEnvBenefits)) {
-                throw "Invalid EnvironmentalBenefits object (property 'siteEnvBenefits' does not exist)"
+            if (-not (PropertyExistsAndIsNotNull $_siteEnvBenefits siteEnvBenefits)) {
+                throw "Invalid EnvironmentalBenefits object (property 'siteEnvBenefits' does not exist or is null)"
             }
 
             if (++$n -gt 1) {
@@ -567,8 +567,8 @@ function Write-SolarEdgeSiteInventory
 
     process {
         foreach ($_siteInventory in $SiteInventory) {
-            if (-not (PropertyExists $_siteInventory siteInventory)) {
-                throw "Invalid SiteInventory object (property 'siteInventory' does not exist)"
+            if (-not (PropertyExistsAndIsNotNull $_siteInventory siteInventory)) {
+                throw "Invalid SiteInventory object (property 'siteInventory' does not exist or is null)"
             }
 
             if (++$n -gt 1) {
@@ -656,8 +656,8 @@ function Write-SolarEdgeSiteOverview
 
     process {
         foreach ($_siteOverview in $SiteOverview) {
-            if (-not (PropertyExists $_siteOverview siteOverview)) {
-                throw "Invalid SiteOverview object (property 'siteOverview' does not exist)"
+            if (-not (PropertyExistsAndIsNotNull $_siteOverview siteOverview)) {
+                throw "Invalid SiteOverview object (property 'siteOverview' does not exist or is null)"
             }
 
             if (++$n -gt 1) {
@@ -704,8 +704,8 @@ function Write-SolarEdgeSitePower
 
     process {
         foreach ($_sitePower in $SitePower) {
-            if (-not (PropertyExists $SitePower sitePower)) {
-                throw "Invalid SitePower object (property 'sitePower' does not exist)"
+            if (-not (PropertyExistsAndIsNotNull $SitePower sitePower)) {
+                throw "Invalid SitePower object (property 'sitePower' does not exist or is null)"
             }
 
             $dateColumn           = [System.Data.DataColumn]::new('Date')
@@ -724,7 +724,7 @@ function Write-SolarEdgeSitePower
             }
 
             foreach ($_value in $_sitePower.sitePower.values) {
-                $value = if (PropertyExistsAndNotNull $_value value) { $_value.value.ToString('F1') } else { '0.0' }
+                $value = if (PropertyExistsAndIsNotNull $_value value) { $_value.value.ToString('F1') } else { '0.0' }
 
                 [void] $powerTable.Rows.Add($_value.date, $value)
             }
@@ -773,8 +773,8 @@ function Write-SolarEdgeSitePowerDetails
 
     process {
         foreach ($_sitePowerDetails in $SitePowerDetails) {
-            if (-not (PropertyExists $_sitePowerDetails sitePowerDetails)) {
-                throw "Invalid PowerDetails object (property 'sitePowerDetails' does not exist)"
+            if (-not (PropertyExistsAndIsNotNull $_sitePowerDetails sitePowerDetails)) {
+                throw "Invalid PowerDetails object (property 'sitePowerDetails' does not exist or is null)"
             }
 
             $powerTable = $null
@@ -782,7 +782,7 @@ function Write-SolarEdgeSitePowerDetails
             foreach ($_meter in $_sitePowerDetails.sitePowerDetails.meters) {
                 $meterHasData = $false
                 foreach ($_value in $_meter.values) {
-                    if (PropertyExistsAndNotNull $_value value) {
+                    if (PropertyExistsAndIsNotNull $_value value) {
                         $meterHasData = $true
                         break
                     }
@@ -807,7 +807,7 @@ function Write-SolarEdgeSitePowerDetails
                     }
 
                     foreach ($_value in $_meter.values) {
-                        $value = if (PropertyExistsAndNotNull $_value value) { $_value.value.ToString('F1') } else { '0.0' }
+                        $value = if (PropertyExistsAndIsNotNull $_value value) { $_value.value.ToString('F1') } else { '0.0' }
 
                         [void] $meterTable.Rows.Add($_value.date, $value)
                     }
@@ -865,8 +865,8 @@ function Write-SolarEdgeSitePowerFlow
 
     process {
         foreach ($_sitePowerFlow in $SitePowerFlow) {
-            if (-not (PropertyExists $_sitePowerFlow sitePowerFlow)) {
-                throw "Invalid SitePowerFlow object (property 'sitePowerFlow' does not exist)"
+            if (-not (PropertyExistsAndIsNotNull $_sitePowerFlow sitePowerFlow)) {
+                throw "Invalid SitePowerFlow object (property 'sitePowerFlow' does not exist or is null)"
             }
 
             if (++$n -gt 1) {
@@ -885,13 +885,13 @@ function Write-SolarEdgeSitePowerFlow
             }
             
             foreach ($_elementName in $powerFlowElements) {
-                if (PropertyExists $powerFlow $_elementName) {
+                if (PropertyExistsAndIsNotNull $powerFlow $_elementName) {
                     $element = $powerFlow.$_elementName
 
                     Write-Output "Element $($_elementName)"
                     Write-Output "  Status : $($element.status)"
 
-                    if (PropertyExists $element currentPower) {
+                    if (PropertyExistsAndIsNotNull $element currentPower) {
                         Write-Output "  Power  : $($element.currentPower) $($powerFlow.unit)"
                     }
                 }
