@@ -1,4 +1,4 @@
-# Copyright (C) 2025 Roger Hunen
+# Copyright (C) 2025-2026 Roger Hunen
 #
 # Permission to use, copy, modify, and distribute this software and its
 # documentation under the terms of the GNU General Public License is hereby 
@@ -8,10 +8,10 @@
 
 @{
     GUID              = '7781f6a2-721e-4de1-88f2-f1c4b4a9e31c'
-    ModuleVersion     = '1.1.0'
+    ModuleVersion     = '1.2.0'
     Author            = 'Roger Hunen'
     CompanyName       = 'Roger Hunen'
-    Copyright         = '(c) 2025 Roger Hunen. All rights reserved.'
+    Copyright         = '(c) 2025-2026 Roger Hunen. All rights reserved.'
 	Description       = 'Functions to retrieve data from the SolarEdge Monitoring API'
     NestedModules     = @(
         'SolarEdge.Monitoring.Api.psm1',

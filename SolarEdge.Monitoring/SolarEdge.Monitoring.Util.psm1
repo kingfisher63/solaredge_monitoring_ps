@@ -1,4 +1,4 @@
-# Copyright (C) 2025 Roger Hunen
+# Copyright (C) 2025-2026 Roger Hunen
 #
 # Permission to use, copy, modify, and distribute this software and its
 # documentation under the terms of the GNU General Public License is hereby 
