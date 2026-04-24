@@ -67,52 +67,6 @@ function PropertyHasValue
 # Exported functions
 #
 
-function Write-SolarEdgeApiInfo
-{
-    <#
-        .SYNOPSIS
-        Writes the current and supported SolarEdge Monitoring API versions to
-        Output as text.
-        .PARAMETER ApiInfo
-        The SolarEdge API info.
-        .INPUTS
-        System.Management.Automation.PSCustomObject[]
-        .LINK
-        Get-SolarEdgeApiInfo
-    #>
-
-    param (
-        [Parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $ApiInfo
-    )
-
-    begin {
-        $n = 0
-    }
-
-    process {
-        foreach ($_apiInfo in $ApiInfo) {
-            if (-not (PropertyExists $_apiInfo apiInfo)) {
-                throw "Invalid ApiInfo object (property 'apiInfo' does not exist)"
-            }
-
-            if (++$n -gt 1) {
-                Write-Output ''
-            }
-
-            $info              = $_apiInfo.apiInfo
-            $currentVersion    = $info.version.release
-            $supportedVersions = @()
-
-            foreach ($_supported in $info.supported) {
-                $supportedVersions += $_supported.release
-            }
-
-            Write-Output "Current API version : $currentVersion"
-            Write-Output "Supported versions  : $($supportedVersions -join ', ')"
-        }
-    }
-}
-
 function Write-SolarEdgeSiteDataPeriod
 {
     <#

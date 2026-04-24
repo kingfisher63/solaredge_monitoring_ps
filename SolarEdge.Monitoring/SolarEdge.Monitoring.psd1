@@ -18,12 +18,8 @@
         'SolarEdge.Monitoring.Util.psm1'
     )
     FunctionsToExport = @(
-        'Get-SolarEdgeApiInfo'
-        'Get-SolarEdgeEquipmentChangeLog'
         'Get-SolarEdgeInverterData'
         'Get-SolarEdgeMeterData'
-        'Get-SolarEdgeSensorData'
-        'Get-SolarEdgeSensorList'
         'Get-SolarEdgeSiteDataPeriod'
         'Get-SolarEdgeSiteDetails'
         'Get-SolarEdgeSiteEnergy'
@@ -37,7 +33,6 @@
         'Get-SolarEdgeSitePowerDetails'
         'Get-SolarEdgeSitePowerFlow'
         'Get-SolarEdgeStorageData'
-        'Write-SolarEdgeApiInfo'
         'Write-SolarEdgeSiteDataPeriod'
         'Write-SolarEdgeSiteDetails'
         'Write-SolarEdgeSiteEnergy'

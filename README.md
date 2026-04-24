@@ -41,14 +41,9 @@ The function *Get-SolarEdgeSiteDataPeriod* will for example return (JSON)
 
 | API                         | API Endpoint                                     | Function                        | Notes |
 |:--------------------------- |:------------------------------------------------ |:------------------------------- |:-----:|
-| API Version                 | /version/current                                 | Get-SolaredgeApiInfo            | 1     |
-| API Versions Supported      | /version/supported                               | Get-SolaredgeApiInfo            | 1     |
-| Equipment Change Log        | /equipment/&lt;site&gt;/&lt;serial&gt;/changeLog | Get-SolarEdgeEquipmentChangeLog |       |
 | Inverter Technical Data     | /equipment/&lt;site&gt;/&lt;serial&gt;/data      | Get-SolarEdgeInverterData       |       |
 | Inventory                   | /site/&lt;site&gt;/inventory                     | Get-SolarEdgeSiteInventory      |       |
 | Get Meter Data              | /site/&lt;site&gt;/meters                        | Get-SolarEdgeMeterData          |       |
-| Get Sensor Data             | /equipment/&lt;site&gt;/sensors                  | Get-SolarEdgeSensorData         |       |
-| Get Sensor List             | /equipment/&lt;site&gt;/sensors                  | Get-SolarEdgeSensorList         |       |
 | Site Data                   | /sites/&lt;site_list&gt;/dataPeriod              | Get-SolarEdgeSiteDataPeriod     |       |
 | Site Details                | /site/&lt;site&gt;/details                       | Get-SolarEdgeSiteDetails        |       |
 | Site Energy                 | /sites/&lt;site_list&gt;/energy                  | Get-SolarEdgeSiteEnergy         |       |
@@ -70,10 +65,7 @@ The function *Get-SolarEdgeSiteDataPeriod* will for example return (JSON)
 
 | API                  | API Endpoint                      | Reason                                          |
 |:-------------------- |:--------------------------------- |:----------------------------------------------- |
-| Account List         | /accounts/list                    | API returns HTTP 403 (forbidden)                |
 | Component List       | /equipment/&lt;site&gt;/list      | Inventory API returns more detailed information |
-| Installer Logo Image | /site/&lt;site&gt;/installerImage | Possible future addition                        |
-| Site Image           | /site/&lt;site&gt;/siteImage      | Possible future addition                        |
 
 ### SolarEdge.Monitoring.Util
 
@@ -85,12 +77,8 @@ The table below lists the *SolarEdge.Monitoring.Api* functions and their *SolarE
 
 | SolarEdge.Monitoring.Api function | SolarEdge.Monitoring.Util function | Notes |
 |:--------------------------------- |:---------------------------------- |:-----:|
-| Get-SolarEdgeApiInfo              | Write-SolarEdgeApiInfo             |       |
-| Get-SolarEdgeEquipmentChangeLog   | *not implemented*                  | 1     |
-| Get-SolarEdgeInverterData         | *not implemented*                  | 2     |
-| Get-SolarEdgeMeterData            | *not implemented*                  | 1     |
-| Get-SolarEdgeSensorData           | *not implemented*                  | 1     |
-| Get-SolarEdgeSensorList           | *not implemented*                  | 1     |
+| Get-SolarEdgeInverterData         | *not implemented*                  | 1     |
+| Get-SolarEdgeMeterData            | *not implemented*                  | 2     |
 | Get-SolarEdgeSiteDataPeriod       | Write-SolarEdgeSiteDataPeriod      |       |
 | Get-SolarEdgeSiteDetails          | Write-SolarEdgeSiteDetails         |       |
 | Get-SolarEdgeSiteEnergy           | Write-SolarEdgeSiteEnergy          |       |
@@ -103,10 +91,10 @@ The table below lists the *SolarEdge.Monitoring.Api* functions and their *SolarE
 | Get-SolarEdgeSitePower            | Write-SolarEdgeSitePower           |       |
 | Get-SolarEdgeSitePowerDetails     | Write-SolarEdgeSitePowerDetails    |       |
 | Get-SolarEdgeSitePowerFlow        | Write-SolarEdgeSitePowerFlow       |       |
-| Get-SolarEdgeStorageData          | *not implemented*                  | 1     |
+| Get-SolarEdgeStorageData          | *not implemented*                  | 2     |
 
-(1) No sample data available. Possible future addition.  
-(2) Data is too complex for simple text representation. Use *Export-SolarEdgeInverterData* to export data to a CSV file.  
+(1) Data is too complex for simple text representation. Use *Export-SolarEdgeInverterData* to export data to a CSV file.
+(2) No sample data available. Possible future addition.
 (3) Only inverter data is fully decoded as no sample data was available for batteries, gateways, meters en sensors.
 
 ## Module SolarEdge.Monitoring.Export
