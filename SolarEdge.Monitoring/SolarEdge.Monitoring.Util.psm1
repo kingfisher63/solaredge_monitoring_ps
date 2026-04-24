@@ -394,7 +394,7 @@ function Write-SolarEdgeSiteEnergyDetails
                 throw "Invalid SiteEnergyDetails object (property 'siteEnergyDetails' does not exist)"
             }
 
-            $outputTable = $null
+            $siteEnergyTable = $null
 
             foreach ($_meter in $_siteEnergyDetails.siteEnergyDetails.meters) {
                 $meterHasData = $false
@@ -427,10 +427,10 @@ function Write-SolarEdgeSiteEnergyDetails
                         [void] $meterTable.Rows.Add($_value.date, $_value.value.ToString('F1'))
                     }
 
-                    if ($null -eq $outputTable) {
-                        $outputTable = $meterTable
+                    if ($null -eq $siteEnergyTable) {
+                        $siteEnergyTable = $meterTable
                     } else {
-                        $outputTable.Merge($meterTable)
+                        $siteEnergyTable.Merge($meterTable)
                     }
                 }
             }
@@ -448,10 +448,10 @@ function Write-SolarEdgeSiteEnergyDetails
                 Write-Output '---'
             }
 
-            if ($null -eq $outputTable) {
+            if ($null -eq $siteEnergyTable) {
                 Write-Output "No energy data available."
             } else {
-                WriteTable $outputTable
+                WriteTable $siteEnergyTable
             }
         }
     }
