@@ -25,7 +25,7 @@ function GetValueFieldWidth
     $width = 0;
 
     foreach ($_object in $objects) {
-        if (PropertyHasValue $_object value) {
+        if (PropertyExistsAndNotNull $_object value) {
             $length = $_object.value.ToString('F1').Length
         } else {
             $length = 3
@@ -49,7 +49,7 @@ function PropertyExists
     return ($object | Get-Member -Name $propertyName)
 }
 
-function PropertyHasValue
+function PropertyExistsAndNotNull
 {
     param (
         [Object] $object,
@@ -222,7 +222,7 @@ function Write-SolarEdgeSiteEnergy
             $valueWidth = GetValueFieldWidth $values
 
             foreach ($_value in $values) {
-                if (PropertyHasValue $_value value) {
+                if (PropertyExistsAndNotNull $_value value) {
                     Write-Output ("$($_value.date)  {0,$valueWidth} $unit" -f $_value.value.ToString('F1'))
                 } else {
                     Write-Output ("$($_value.date)  {0,$valueWidth} $unit" -f '0.0')
@@ -274,7 +274,7 @@ function Write-SolarEdgeSiteEnergyDetails
             foreach ($_meter in $energyDetails.meters) {
                 $meterHasData = $false
                 foreach ($_value in $_meter.values) {
-                    if (PropertyHasValue $_value value) {
+                    if (PropertyExistsAndNotNull $_value value) {
                         $meterHasData = $true
                         break
                     }
@@ -291,7 +291,7 @@ function Write-SolarEdgeSiteEnergyDetails
                 Write-Output "Meter '$($_meter.type)'"
                 foreach ($_value in $_meter.values) {
                     $formatString = "  $($_value.date)  {0,$valueWidth} $($energyDetails.unit)"
-                    if (PropertyHasValue $_value value) {
+                    if (PropertyExistsAndNotNull $_value value) {
                         Write-Output ($formatString -f $_value.value.ToString('F1'))
                     } else {
                         Write-Output ($formatString -f '0.0')
@@ -574,7 +574,7 @@ function Write-SolarEdgeSitePower
             $valueWidth = GetValueFieldWidth $values
 
             foreach ($_value in $values) {
-                if (PropertyHasValue $_value value) {
+                if (PropertyExistsAndNotNull $_value value) {
                     Write-Output ("$($_value.date)  {0,$valueWidth} $unit" -f $_value.value.ToString('F1'))
                 } else {
                     Write-Output ("$($_value.date)  {0,$valueWidth} $unit" -f '0.0')
@@ -626,7 +626,7 @@ function Write-SolarEdgeSitePowerDetails
             foreach ($_meter in $powerDetails.meters) {
                 $meterHasData = $false
                 foreach ($_value in $_meter.values) {
-                    if (PropertyHasValue $_value value) {
+                    if (PropertyExistsAndNotNull $_value value) {
                         $meterHasData = $true
                         break
                     }
@@ -643,7 +643,7 @@ function Write-SolarEdgeSitePowerDetails
                 Write-Output "Meter '$($_meter.type)'"
                 foreach ($_value in $_meter.values) {
                     $formatString = "  $($_value.date)  {0,$valueWidth} $($powerDetails.unit)"
-                    if (PropertyHasValue $_value value) {
+                    if (PropertyExistsAndNotNull $_value value) {
                         Write-Output ($formatString -f $_value.value.ToString('F1'))
                     } else {
                         Write-Output ($formatString -f '0.0')
