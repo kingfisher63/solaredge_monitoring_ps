@@ -63,6 +63,37 @@ function PropertyExistsAndNotNull
     }
 }
 
+function WriteTable
+{
+    param (
+        [System.Data.DataTable] $table
+    )
+
+    $columnWidth = [int[]]::new($table.Columns.Count)
+    
+    foreach ($row in $table.Rows) {
+        for ($i = 0; $i -lt $columnWidth.Length; $i++) {
+            if ($columnWidth[$i] -lt $row[$i].Length) {
+                $columnWidth[$i] =   $row[$i].Length
+            }
+        }
+    }
+
+    foreach ($row in $table.Rows) {
+        $line = ''
+
+        for ($i = 0; $i -lt $columnWidth.Length; $i++) {
+            if ($i -ne 0) {
+                $line += '  '
+            }
+
+            $line += "{0, -$($columnWidth[$i])}" -f $row[$i]
+        }
+
+        Write-Output $line
+    }
+}
+
 #
 # Exported functions
 #
