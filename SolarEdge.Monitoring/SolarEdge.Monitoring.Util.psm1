@@ -16,39 +16,6 @@ $powerFlowElements = 'GRID', 'LOAD', 'PV', 'STORAGE'
 # Support functions (not exported)
 #
 
-function GetValueFieldWidth
-{
-    param (
-        [Object[]] $objects
-    )
-
-    $width = 0;
-
-    foreach ($_object in $objects) {
-        if (PropertyExistsAndIsNotNull $_object value) {
-            $length = $_object.value.ToString('F1').Length
-        } else {
-            $length = 3
-        }
-
-        if ($width -lt $length) {
-            $width = $length
-        }
-    }
-
-    return $width
-}
-
-function PropertyExists
-{
-    param (
-        [Object] $object,
-        [String] $propertyName
-    )
-
-    return ($object | Get-Member -Name $propertyName)
-}
-
 function PropertyExistsAndIsNotNull
 {
     param (
