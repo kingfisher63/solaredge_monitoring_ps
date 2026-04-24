@@ -577,13 +577,11 @@ function Write-SolarEdgeSiteInventory
 
             $inventory = $_siteInventory.siteInventory
 
-            Write-Output "Summary"
-            Write-Output "  Site ID          : $($_siteInventory.siteId)"
+            Write-Output "Site $($_siteInventory.siteId)"
             Write-Output "  Inverters        : $($inventory.inverters.count)"
             Write-Output "  Batteries        : $($inventory.batteries.count)"
             Write-Output "  Gateways         : $($inventory.gateways.count)"
             Write-Output "  Meters           : $($inventory.meters.count)"
-            Write-Output "  Sensors          : $($inventory.sensors.count)"
 
             $nitems = 0
             foreach ($_inverter in $inventory.inverters) {
@@ -630,13 +628,6 @@ function Write-SolarEdgeSiteInventory
                     Write-Output "  Firmware version : $($_meter.firmwareVersion)"
                 }
                 Write-Output "  Connected to     : $($_meter.connectedTo) ($($_meter.connectedSolaredgeDeviceSN))"
-            }
-
-            $nitems = 0
-            foreach ($_sensor in $inventory.sensors) {
-                ++$nitems
-
-                Write-Output "Sensor #$nitems (properties TODO)"
             }
         }
     }

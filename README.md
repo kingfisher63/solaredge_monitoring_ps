@@ -78,24 +78,24 @@ The table below lists the *SolarEdge.Monitoring.Api* functions and their *SolarE
 | SolarEdge.Monitoring.Api function | SolarEdge.Monitoring.Util function | Notes |
 |:--------------------------------- |:---------------------------------- |:-----:|
 | Get-SolarEdgeInverterData         | *not implemented*                  | 1     |
-| Get-SolarEdgeMeterData            | *not implemented*                  | 2     |
+| Get-SolarEdgeMeterData            | Write-SolarEdgeMeterData           |       |
 | Get-SolarEdgeSiteDataPeriod       | Write-SolarEdgeSiteDataPeriod      |       |
 | Get-SolarEdgeSiteDetails          | Write-SolarEdgeSiteDetails         |       |
 | Get-SolarEdgeSiteEnergy           | Write-SolarEdgeSiteEnergy          |       |
 | Get-SolarEdgeSiteEnergyDetails    | Write-SolarEdgeSiteEnergyDetails   |       |
 | Get-SolarEdgeSiteEnergySummary    | Write-SolarEdgeSiteEnergySummary   |       |
 | Get-SolarEdgeSiteEnvBenefits      | Write-SolarEdgeSiteEnvBenefits     |       |
-| Get-SolarEdgeSiteInventory        | Write-SolarEdgeSiteInventory       | 3     |
+| Get-SolarEdgeSiteInventory        | Write-SolarEdgeSiteInventory       | 2     |
 | Get-SolarEdgeSiteList             | Write-SolarEdgeSiteDetails         |       |
 | Get-SolarEdgeSiteOverview         | Write-SolarEdgeSiteOverview        |       |
 | Get-SolarEdgeSitePower            | Write-SolarEdgeSitePower           |       |
 | Get-SolarEdgeSitePowerDetails     | Write-SolarEdgeSitePowerDetails    |       |
 | Get-SolarEdgeSitePowerFlow        | Write-SolarEdgeSitePowerFlow       |       |
-| Get-SolarEdgeStorageData          | *not implemented*                  | 2     |
+| Get-SolarEdgeStorageData          | *not implemented*                  | 3     |
 
 (1) Data is too complex for simple text representation. Use *Export-SolarEdgeInverterData* to export data to a CSV file.
-(2) No sample data available. Possible future addition.
-(3) Only inverter data is fully decoded as no sample data was available for batteries, gateways, meters en sensors.
+(2) Batteries and gateways are not decoded (no sample data available).
+(3) No sample data available. Possible future addition.
 
 ## Module SolarEdge.Monitoring.Export
 
