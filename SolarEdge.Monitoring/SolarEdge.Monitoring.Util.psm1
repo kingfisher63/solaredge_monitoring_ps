@@ -98,6 +98,92 @@ function WriteTable
 # Exported functions
 #
 
+function Write-SolarEdgeMeterData
+{
+    <#
+        .SYNOPSIS
+        Writes the SolarEdge meter data to Output as text.
+        .PARAMETER MeterData
+        The SolarEdge meter data.
+        .PARAMETER OmitHeaders
+        Omit headers. The output will contain only timestamps and meter readings.
+        .INPUTS
+        System.Management.Automation.PSCustomObject
+        .LINK
+        Get-SolarEdgeMeterData
+    #>
+
+    param (
+        [Parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $MeterData,
+        [Parameter()]                            [switch]           $OmitHeaders
+    )
+
+    begin {
+        $n = 0
+    }
+
+    process {
+        foreach ($_meterData in $MeterData) {
+            if (-not (PropertyExists $_meterData meterData)) {
+                throw "Invalid MeterData object (property 'meterData' does not exist)"
+            }
+
+            $outputTable = $null
+
+            foreach ($_meter in $_meterData.meterData.meters) {
+                $dateColumn               = [System.Data.DataColumn]::new('Date')
+                $dateColumn.DataType      = [System.Type]::GetType('System.String')
+
+                $valueColumn              = [System.Data.DataColumn]::new($_meter.meterType)
+                $valueColumn.DataType     = [System.Type]::GetType('System.String')
+                $valueColumn.DefaultValue = ''
+
+                $meterTable               = [System.Data.DataTable]::new()
+                $meterTable.Columns.Add($dateColumn)
+                $meterTable.Columns.Add($valueColumn)
+                $meterTable.PrimaryKey    = ($dateColumn)
+
+                if (-not $OmitHeaders) {
+                    [void] $meterTable.Rows.Add('Meter',                  $_meter.meterType)
+                    [void] $meterTable.Rows.Add('Meter model',            $_meter.model)
+                    [void] $meterTable.Rows.Add('Meter serial number',    $_meter.meterSerialNumber)
+                    [void] $meterTable.Rows.Add('Inverter serial number', $_meter.connectedSolaredgeDeviceSN)
+                    [void] $meterTable.Rows.Add('--',                     '--')
+                }
+
+                foreach ($_meterValue in $_meter.values) {
+                    [void] $meterTable.Rows.Add($_meterValue.date, $_meterValue.value.ToString('F1'))
+                }
+
+                if ($null -eq $outputTable) {
+                    $outputTable = $meterTable
+                } else {
+                    $outputTable.Merge($meterTable)
+                }
+            }
+
+            if (++$n -gt 1) {
+                Write-Output ''
+            }
+
+            if (-not $OmitHeaders) {
+                Write-Output "Site ID      $($_meterData.siteId)"
+                Write-Output "Start time   $($_meterData.startTime)"
+                Write-Output "End time     $($_meterData.endTime)"
+                Write-Output "Time unit    $($_meterData.timeUnit)"
+                Write-Output "Energy unit  $($_meterData.meterData.unit)"
+                Write-Output '---'
+            }
+
+            if ($null -eq $outputTable) {
+                Write-Output "No meter data available."
+            } else {
+                WriteTable $outputTable
+            }
+        }
+    }
+}
+
 function Write-SolarEdgeSiteDataPeriod
 {
     <#
