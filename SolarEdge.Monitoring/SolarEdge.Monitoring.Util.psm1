@@ -504,7 +504,7 @@ function Write-SolarEdgeSiteEnvBenefits
 {
     <#
         .SYNOPSIS
-        Writes the SolarEdge site current powerflow to Output as text.
+        Writes the SolarEdge site environmental benefits to Output as text.
         .PARAMETER SiteEnvBenefits
         The SolarEdge site environmental benefits.
         .INPUTS
