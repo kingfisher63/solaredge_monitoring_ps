@@ -371,6 +371,8 @@ function Write-SolarEdgeSiteEnergyDetails
         Writes the SolarEdge site energy details to Output as text.
         .PARAMETER EnergyDetails
         The SolarEdge energy details.
+        .PARAMETER OmitHeaders
+        Omit headers. The output will contain only timestamps and energy readings.
         .INPUTS
         System.Management.Automation.PSCustomObject[]
         .LINK
@@ -378,7 +380,8 @@ function Write-SolarEdgeSiteEnergyDetails
     #>
 
     param (
-        [parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $SiteEnergyDetails
+        [parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $SiteEnergyDetails,
+        [Parameter()]                            [switch]           $OmitHeaders
     )
 
     begin {
@@ -391,19 +394,9 @@ function Write-SolarEdgeSiteEnergyDetails
                 throw "Invalid SiteEnergyDetails object (property 'siteEnergyDetails' does not exist)"
             }
 
-            if (++$n -gt 1) {
-                Write-Output ''
-            }
+            $outputTable = $null
 
-            $energyDetails = $_siteEnergyDetails.siteEnergyDetails
-
-            Write-Output "Site ID      : $($_siteEnergyDetails.siteId)"
-            Write-Output "Start time   : $($_siteEnergyDetails.startTime)"
-            Write-Output "End time     : $($_siteEnergyDetails.endTime)"
-            Write-Output "Time unit    : $($energyDetails.timeUnit)"
-            Write-Output "---"
-
-            foreach ($_meter in $energyDetails.meters) {
+            foreach ($_meter in $_siteEnergyDetails.siteEnergyDetails.meters) {
                 $meterHasData = $false
                 foreach ($_value in $_meter.values) {
                     if (PropertyExistsAndNotNull $_value value) {
@@ -412,23 +405,53 @@ function Write-SolarEdgeSiteEnergyDetails
                     }
                 }
 
-                if (-not $meterHasData) {
-                    Write-Output "Meter '$($_meter.type)'"
-                    Write-Output "  No data"
-                    continue
-                }
+                if ($meterHasData) {
+                    $dateColumn               = [System.Data.DataColumn]::new('Date')
+                    $dateColumn.DataType      = [System.Type]::GetType('System.String')
 
-                $valueWidth = GetValueFieldWidth $_meter.values
+                    $valueColumn              = [System.Data.DataColumn]::new($_meter.type)
+                    $valueColumn.DataType     = [System.Type]::GetType('System.String')
+                    $valueColumn.DefaultValue = ''
 
-                Write-Output "Meter '$($_meter.type)'"
-                foreach ($_value in $_meter.values) {
-                    $formatString = "  $($_value.date)  {0,$valueWidth} $($energyDetails.unit)"
-                    if (PropertyExistsAndNotNull $_value value) {
-                        Write-Output ($formatString -f $_value.value.ToString('F1'))
+                    $meterTable               = [System.Data.DataTable]::new()
+                    $meterTable.Columns.Add($dateColumn)
+                    $meterTable.Columns.Add($valueColumn)
+                    $meterTable.PrimaryKey    = ($dateColumn)
+
+                    if (-not $OmitHeaders) {
+                        [void] $meterTable.Rows.Add('Date', $_meter.type)
+                        [void] $meterTable.Rows.Add('--',   '--')
+                    }
+
+                    foreach ($_value in $_meter.values) {
+                        [void] $meterTable.Rows.Add($_value.date, $_value.value.ToString('F1'))
+                    }
+
+                    if ($null -eq $outputTable) {
+                        $outputTable = $meterTable
                     } else {
-                        Write-Output ($formatString -f '0.0')
+                        $outputTable.Merge($meterTable)
                     }
                 }
+            }
+
+            if (++$n -gt 1) {
+                Write-Output ''
+            }
+
+            if (-Not $OmitHeaders) {
+                Write-Output "Site ID      $($_siteEnergyDetails.siteId)"
+                Write-Output "Start time   $($_siteEnergyDetails.startTime)"
+                Write-Output "End time     $($_siteEnergyDetails.endTime)"
+                Write-Output "Time unit    $($_siteEnergyDetails.timeUnit)"
+                Write-Output "Energy unit  $($_siteEnergyDetails.siteEnergyDetails.unit)"
+                Write-Output '---'
+            }
+
+            if ($null -eq $outputTable) {
+                Write-Output "No energy data available."
+            } else {
+                WriteTable $outputTable
             }
         }
     }
