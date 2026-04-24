@@ -754,6 +754,8 @@ function Write-SolarEdgeSitePowerDetails
         Writes the SolarEdge site power details to Output as text.
         .PARAMETER SitePowerDetails
         The SolarEdge site power details.
+        .PARAMETER OmitHeaders
+        Omit headers. The output will contain only timestamps and power readings.
         .INPUTS
         System.Management.Automation.PSCustomObject[]
         .LINK
@@ -761,7 +763,8 @@ function Write-SolarEdgeSitePowerDetails
     #>
 
     param (
-        [parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $SitePowerDetails
+        [parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $SitePowerDetails,
+        [Parameter()]                            [switch]           $OmitHeaders
     )
 
     begin {
@@ -774,19 +777,9 @@ function Write-SolarEdgeSitePowerDetails
                 throw "Invalid PowerDetails object (property 'sitePowerDetails' does not exist)"
             }
 
-            if (++$n -gt 1) {
-                Write-Output ''
-            }
+            $powerTable = $null
 
-            $powerDetails = $_sitePowerDetails.sitePowerDetails
-
-            Write-Output "Site ID      : $($_sitePowerDetails.siteId)"
-            Write-Output "Start time   : $($_sitePowerDetails.startTime)"
-            Write-Output "End time     : $($_sitePowerDetails.endTime)"
-            Write-Output "Time unit    : $($powerDetails.timeUnit)"
-            Write-Output "---"
-
-            foreach ($_meter in $powerDetails.meters) {
+            foreach ($_meter in $_sitePowerDetails.sitePowerDetails.meters) {
                 $meterHasData = $false
                 foreach ($_value in $_meter.values) {
                     if (PropertyExistsAndNotNull $_value value) {
@@ -795,23 +788,55 @@ function Write-SolarEdgeSitePowerDetails
                     }
                 }
 
-                if (-not $meterHasData) {
-                    Write-Output "Meter '$($_meter.type)'"
-                    Write-Output "  No data"
-                    continue
-                }
+                if ($meterHasData) {
+                    $dateColumn               = [System.Data.DataColumn]::new('Date')
+                    $dateColumn.DataType      = [System.Type]::GetType('System.String')
 
-                $valueWidth = GetValueFieldWidth $_meter.values
+                    $valueColumn              = [System.Data.DataColumn]::new($_meter.type)
+                    $valueColumn.DataType     = [System.Type]::GetType('System.String')
+                    $valueColumn.DefaultValue = ''
 
-                Write-Output "Meter '$($_meter.type)'"
-                foreach ($_value in $_meter.values) {
-                    $formatString = "  $($_value.date)  {0,$valueWidth} $($powerDetails.unit)"
-                    if (PropertyExistsAndNotNull $_value value) {
-                        Write-Output ($formatString -f $_value.value.ToString('F1'))
+                    $meterTable               = [System.Data.DataTable]::new()
+                    $meterTable.Columns.Add($dateColumn)
+                    $meterTable.Columns.Add($valueColumn)
+                    $meterTable.PrimaryKey    = ($dateColumn)
+
+                    if (-not $OmitHeaders) {
+                        [void] $meterTable.Rows.Add('Date', $_meter.type)
+                        [void] $meterTable.Rows.Add('--',   '--')
+                    }
+
+                    foreach ($_value in $_meter.values) {
+                        $value = if (PropertyExistsAndNotNull $_value value) { $_value.value.ToString('F1') } else { '0.0' }
+
+                        [void] $meterTable.Rows.Add($_value.date, $value)
+                    }
+
+                    if ($null -eq $powerTable) {
+                        $powerTable = $meterTable
                     } else {
-                        Write-Output ($formatString -f '0.0')
+                        $powerTable.Merge($meterTable)
                     }
                 }
+            }
+
+            if (++$n -gt 1) {
+                Write-Output ''
+            }
+
+            if (-Not $OmitHeaders) {
+                Write-Output "Site ID      $($_sitePowerDetails.siteId)"
+                Write-Output "Start time   $($_sitePowerDetails.startTime)"
+                Write-Output "End time     $($_sitePowerDetails.endTime)"
+                Write-Output "Time unit    $($_sitePowerDetails.sitePowerDetails.timeUnit)"
+                Write-Output "Energy unit  $($_sitePowerDetails.sitePowerDetails.unit)"
+                Write-Output "---"
+            }
+
+            if ($null -eq $powerTable) {
+                Write-Output "No power data available."
+            } else {
+                WriteTable $powerTable
             }
         }
     }
