@@ -128,7 +128,7 @@ function Write-SolarEdgeMeterData
                 throw "Invalid MeterData object (property 'meterData' does not exist)"
             }
 
-            $outputTable = $null
+            $meterDataTable = $null
 
             foreach ($_meter in $_meterData.meterData.meters) {
                 $dateColumn               = [System.Data.DataColumn]::new('Date')
@@ -155,10 +155,10 @@ function Write-SolarEdgeMeterData
                     [void] $meterTable.Rows.Add($_meterValue.date, $_meterValue.value.ToString('F1'))
                 }
 
-                if ($null -eq $outputTable) {
-                    $outputTable = $meterTable
+                if ($null -eq $meterDataTable) {
+                    $meterDataTable = $meterTable
                 } else {
-                    $outputTable.Merge($meterTable)
+                    $meterDataTable.Merge($meterTable)
                 }
             }
 
@@ -175,10 +175,10 @@ function Write-SolarEdgeMeterData
                 Write-Output '---'
             }
 
-            if ($null -eq $outputTable) {
+            if ($null -eq $meterDataTable) {
                 Write-Output "No meter data available."
             } else {
-                WriteTable $outputTable
+                WriteTable $meterDataTable
             }
         }
     }
