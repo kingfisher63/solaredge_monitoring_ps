@@ -304,6 +304,8 @@ function Write-SolarEdgeSiteEnergy
         Writes the SolarEdge site energy data to Output as text.
         .PARAMETER SiteEnergy
         The SolarEdge site energy data.
+        .PARAMETER OmitHeaders
+        Omit headers. The output will contain only timestamps and energy readings.
         .INPUTS
         System.Management.Automation.PSCustomObject[]
         .LINK
@@ -311,7 +313,8 @@ function Write-SolarEdgeSiteEnergy
     #>
 
     param (
-        [parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $SiteEnergy
+        [parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $SiteEnergy,
+        [Parameter()]                            [switch]           $OmitHeaders
     )
 
     begin {
@@ -324,27 +327,39 @@ function Write-SolarEdgeSiteEnergy
                 throw "Invalid SiteEnergy object (property 'siteEnergy' does not exist)"
             }
 
+            $dateColumn           = [System.Data.DataColumn]::new('Date')
+            $dateColumn.DataType  = [System.Type]::GetType('System.String')
+
+            $valueColumn          = [System.Data.DataColumn]::new('Value')
+            $valueColumn.DataType = [System.Type]::GetType('System.String')
+
+            $energyTable      = [System.Data.DataTable]::new()
+            $energyTable.Columns.Add($dateColumn)
+            $energyTable.Columns.Add($valueColumn)
+
+            if (-not $OmitHeaders) {
+                [void] $energyTable.Rows.Add('Date', 'Energy')
+                [void] $energyTable.Rows.Add('---',   '--')
+            }
+
+            foreach ($_value in $_siteEnergy.siteEnergy.values) {
+                [void] $energyTable.Rows.Add($_value.date, $_value.value.ToString('F1'))
+            }
+
             if (++$n -gt 1) {
                 Write-Output ''
             }
 
-            Write-Output "Site ID    : $($_siteEnergy.siteId)"
-            Write-Output "Start date : $($_siteEnergy.startDate)"
-            Write-Output "End date   : $($_siteEnergy.endDate)"
-            Write-Output "Time unit  : $($_siteEnergy.timeUnit)"
-            Write-Output "---"
-
-            $unit       = $_siteEnergy.siteEnergy.unit
-            $values     = $_siteEnergy.siteEnergy.values
-            $valueWidth = GetValueFieldWidth $values
-
-            foreach ($_value in $values) {
-                if (PropertyExistsAndNotNull $_value value) {
-                    Write-Output ("$($_value.date)  {0,$valueWidth} $unit" -f $_value.value.ToString('F1'))
-                } else {
-                    Write-Output ("$($_value.date)  {0,$valueWidth} $unit" -f '0.0')
-                }
+            if (-not $OmitHeaders) {
+                Write-Output "Site ID      $($_siteEnergy.siteId)"
+                Write-Output "Start date   $($_siteEnergy.startDate)"
+                Write-Output "End date     $($_siteEnergy.endDate)"
+                Write-Output "Time unit    $($_siteEnergy.timeUnit)"
+                Write-Output "Energy unit  $($_siteEnergy.siteEnergy.unit)"
+                Write-Output '---'
             }
+
+            WriteTable $energyTable
         }
     }
 }
