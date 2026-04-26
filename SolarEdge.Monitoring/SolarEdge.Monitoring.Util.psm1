@@ -72,8 +72,8 @@ function Write-SolarEdgeMeterData
         Writes the SolarEdge meter data to Output as text.
         .PARAMETER MeterData
         The SolarEdge meter data.
-        .PARAMETER OmitHeaders
-        Omit headers. The output will contain only timestamps and meter readings.
+        .PARAMETER OmitHeader
+        Omit table headers. The output will contain only timestamps and meter readings.
         .INPUTS
         System.Management.Automation.PSCustomObject
         .LINK
@@ -82,7 +82,7 @@ function Write-SolarEdgeMeterData
 
     param (
         [Parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $MeterData,
-        [Parameter()]                            [switch]           $OmitHeaders
+        [Parameter()]                            [switch]           $OmitHeader
     )
 
     begin {
@@ -110,7 +110,7 @@ function Write-SolarEdgeMeterData
                 $meterTable.Columns.Add($valueColumn)
                 $meterTable.PrimaryKey    = ($dateColumn)
 
-                if (-not $OmitHeaders) {
+                if (-not $OmitHeader) {
                     [void] $meterTable.Rows.Add('Meter',                  $_meter.meterType)
                     [void] $meterTable.Rows.Add('Meter model',            $_meter.model)
                     [void] $meterTable.Rows.Add('Meter serial number',    $_meter.meterSerialNumber)
@@ -133,7 +133,7 @@ function Write-SolarEdgeMeterData
                 Write-Output ''
             }
 
-            if (-not $OmitHeaders) {
+            if (-not $OmitHeader) {
                 Write-Output "Site ID      $($_meterData.siteId)"
                 Write-Output "Start time   $($_meterData.startTime)"
                 Write-Output "End time     $($_meterData.endTime)"
@@ -271,8 +271,8 @@ function Write-SolarEdgeSiteEnergy
         Writes the SolarEdge site energy data to Output as text.
         .PARAMETER SiteEnergy
         The SolarEdge site energy data.
-        .PARAMETER OmitHeaders
-        Omit headers. The output will contain only timestamps and energy readings.
+        .PARAMETER OmitHeader
+        Omit table headers. The output will contain only timestamps and energy readings.
         .INPUTS
         System.Management.Automation.PSCustomObject[]
         .LINK
@@ -281,7 +281,7 @@ function Write-SolarEdgeSiteEnergy
 
     param (
         [parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $SiteEnergy,
-        [Parameter()]                            [switch]           $OmitHeaders
+        [Parameter()]                            [switch]           $OmitHeader
     )
 
     begin {
@@ -304,7 +304,7 @@ function Write-SolarEdgeSiteEnergy
             $energyTable.Columns.Add($dateColumn)
             $energyTable.Columns.Add($valueColumn)
 
-            if (-not $OmitHeaders) {
+            if (-not $OmitHeader) {
                 [void] $energyTable.Rows.Add('Date', 'Energy')
                 [void] $energyTable.Rows.Add('---',   '--')
             }
@@ -317,7 +317,7 @@ function Write-SolarEdgeSiteEnergy
                 Write-Output ''
             }
 
-            if (-not $OmitHeaders) {
+            if (-not $OmitHeader) {
                 Write-Output "Site ID      $($_siteEnergy.siteId)"
                 Write-Output "Start date   $($_siteEnergy.startDate)"
                 Write-Output "End date     $($_siteEnergy.endDate)"
@@ -338,8 +338,8 @@ function Write-SolarEdgeSiteEnergyDetails
         Writes the SolarEdge site energy details to Output as text.
         .PARAMETER EnergyDetails
         The SolarEdge energy details.
-        .PARAMETER OmitHeaders
-        Omit headers. The output will contain only timestamps and energy readings.
+        .PARAMETER OmitHeader
+        Omit table headers. The output will contain only timestamps and energy readings.
         .INPUTS
         System.Management.Automation.PSCustomObject[]
         .LINK
@@ -348,7 +348,7 @@ function Write-SolarEdgeSiteEnergyDetails
 
     param (
         [parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $SiteEnergyDetails,
-        [Parameter()]                            [switch]           $OmitHeaders
+        [Parameter()]                            [switch]           $OmitHeader
     )
 
     begin {
@@ -385,7 +385,7 @@ function Write-SolarEdgeSiteEnergyDetails
                     $meterTable.Columns.Add($valueColumn)
                     $meterTable.PrimaryKey    = ($dateColumn)
 
-                    if (-not $OmitHeaders) {
+                    if (-not $OmitHeader) {
                         [void] $meterTable.Rows.Add('Date', $_meter.type)
                         [void] $meterTable.Rows.Add('--',   '--')
                     }
@@ -406,7 +406,7 @@ function Write-SolarEdgeSiteEnergyDetails
                 Write-Output ''
             }
 
-            if (-Not $OmitHeaders) {
+            if (-Not $OmitHeader) {
                 Write-Output "Site ID      $($_siteEnergyDetails.siteId)"
                 Write-Output "Start time   $($_siteEnergyDetails.startTime)"
                 Write-Output "End time     $($_siteEnergyDetails.endTime)"
@@ -652,8 +652,8 @@ function Write-SolarEdgeSitePower
         Writes the SolarEdge site power data to Output as text.
         .PARAMETER SitePower
         The SolarEdge site power data.
-        .PARAMETER OmitHeaders
-        Omit headers. The output will contain only timestamps and power readings.
+        .PARAMETER OmitHeader
+        Omit table headers. The output will contain only timestamps and power readings.
         .INPUTS
         System.Management.Automation.PSCustomObject[]
         .LINK
@@ -662,7 +662,7 @@ function Write-SolarEdgeSitePower
 
     param (
         [parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $SitePower,
-        [Parameter()]                            [switch]           $OmitHeaders
+        [Parameter()]                            [switch]           $OmitHeader
     )
 
     begin {
@@ -685,7 +685,7 @@ function Write-SolarEdgeSitePower
             $powerTable.Columns.Add($dateColumn)
             $powerTable.Columns.Add($valueColumn)
 
-            if (-not $OmitHeaders) {
+            if (-not $OmitHeader) {
                 [void] $powerTable.Rows.Add('Date', 'Power')
                 [void] $powerTable.Rows.Add('---',   '--')
             }
@@ -700,7 +700,7 @@ function Write-SolarEdgeSitePower
                 Write-Output ''
             }
 
-            if (-not $OmitHeaders) {
+            if (-not $OmitHeader) {
                 Write-Output "Site ID      $($_sitePower.siteId)"
                 Write-Output "Start time   $($_sitePower.startTime)"
                 Write-Output "End time     $($_sitePower.endTime)"
@@ -721,8 +721,8 @@ function Write-SolarEdgeSitePowerDetails
         Writes the SolarEdge site power details to Output as text.
         .PARAMETER SitePowerDetails
         The SolarEdge site power details.
-        .PARAMETER OmitHeaders
-        Omit headers. The output will contain only timestamps and power readings.
+        .PARAMETER OmitHeader
+        Omit table headers. The output will contain only timestamps and power readings.
         .INPUTS
         System.Management.Automation.PSCustomObject[]
         .LINK
@@ -731,7 +731,7 @@ function Write-SolarEdgeSitePowerDetails
 
     param (
         [parameter(Mandatory,ValueFromPipeline)] [PSCustomObject[]] $SitePowerDetails,
-        [Parameter()]                            [switch]           $OmitHeaders
+        [Parameter()]                            [switch]           $OmitHeader
     )
 
     begin {
@@ -768,7 +768,7 @@ function Write-SolarEdgeSitePowerDetails
                     $meterTable.Columns.Add($valueColumn)
                     $meterTable.PrimaryKey    = ($dateColumn)
 
-                    if (-not $OmitHeaders) {
+                    if (-not $OmitHeader) {
                         [void] $meterTable.Rows.Add('Date', $_meter.type)
                         [void] $meterTable.Rows.Add('--',   '--')
                     }
@@ -791,7 +791,7 @@ function Write-SolarEdgeSitePowerDetails
                 Write-Output ''
             }
 
-            if (-Not $OmitHeaders) {
+            if (-Not $OmitHeader) {
                 Write-Output "Site ID      $($_sitePowerDetails.siteId)"
                 Write-Output "Start time   $($_sitePowerDetails.startTime)"
                 Write-Output "End time     $($_sitePowerDetails.endTime)"
