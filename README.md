@@ -97,19 +97,27 @@ The table below lists the *SolarEdge.Monitoring.Api* functions and their *SolarE
 (2) Batteries and gateways are not decoded (no sample data available).
 (3) No sample data available. Possible future addition.
 
-## Module SolarEdge.Monitoring.Export
+### Module SolarEdge.Monitoring.Export
 
-This module contains functions to export site energy data and inverter technical data to a CSV file.
+This nested module contains functions to export SolarEdge.Monitoring.Api output to a CSV file.
 
-### Installation
-
-This module was developed to serve my personal needs and is provided as-is because I think it may be useful to others. Therefore this module does not have a module manifest and must be installed manually.
-
-+ Create a directory named *SolarEdge.Monitoring.Export* in the module directory for the *CurrentUser* scope (see [about_PSModulePath](https://learn.microsoft.com/powershell/module/microsoft.powershell.core/about/about_psmodulepath)).
-+ Copy the script file *SolarEdge.Monitoring.Export.psm1* into this directory.
-+ Restart PowerShell
-
-Output file names are generated automatically, but can be easily customized (modify the file name format variables near the top of the module script).
+| SolarEdge.Monitoring.Api function | SolarEdge.Monitoring.Util function |
+|:--------------------------------- |:---------------------------------- |
+| Get-SolarEdgeInverterData         | Export-SolarEdgeInverterData       |
+| Get-SolarEdgeMeterData            | *not implemented*                  |
+| Get-SolarEdgeSiteDataPeriod       | *not implemented*                  |
+| Get-SolarEdgeSiteDetails          | *not implemented*                  |
+| Get-SolarEdgeSiteEnergy           | Export-SolarEdgeSiteEnergy         |
+| Get-SolarEdgeSiteEnergyDetails    | *not implemented*                  |
+| Get-SolarEdgeSiteEnergySummary    | *not implemented*                  |
+| Get-SolarEdgeSiteEnvBenefits      | *not implemented*                  |
+| Get-SolarEdgeSiteInventory        | *not implemented*                  |
+| Get-SolarEdgeSiteList             | *not implemented*                  |
+| Get-SolarEdgeSiteOverview         | *not implemented*                  |
+| Get-SolarEdgeSitePower            | *not implemented*                  |
+| Get-SolarEdgeSitePowerDetails     | *not implemented*                  |
+| Get-SolarEdgeSitePowerFlow        | *not implemented*                  |
+| Get-SolarEdgeStorageData          | *not implemented*                  |
 
 ## Examples
 

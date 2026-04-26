@@ -18,6 +18,8 @@
         'SolarEdge.Monitoring.Util.psm1'
     )
     FunctionsToExport = @(
+        'Export-SolarEdgeInverterData'
+        'Export-SolarEdgeSiteEnergy'
         'Get-SolarEdgeInverterData'
         'Get-SolarEdgeMeterData'
         'Get-SolarEdgeSiteDataPeriod'
