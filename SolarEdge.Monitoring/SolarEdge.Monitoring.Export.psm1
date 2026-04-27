@@ -4,14 +4,6 @@ using namespace System.IO
 
 Set-StrictMode -Version 3.0
 
-$yearMin        = 2000
-$yearMax        = 2099
-$yearTimeUnits  = 'DAY', 'MONTH', 'YEAR'
-
-$monthMin       = 1
-$monthMax       = 12
-$monthTimeUnits = '15MIN', 'QUARTER_OF_AN_HOUR', 'HOUR', 'DAY', 'MONTH'
-
 # 0: date
 $solarEdgeDateFormat = '{0:yyyy}-{0:MM}-{0:dd}'
 
@@ -21,16 +13,6 @@ $solarEdgeDateFormat = '{0:yyyy}-{0:MM}-{0:dd}'
 # 1: inverter serial number
 # 2: date
 $inverterFileNameFormat = '{2:yyyy}{2:MM}{2:dd} {1} ({0}).csv'
-
-# Export-SolarEdgeSiteEnergy
-#
-# 0: site ID
-# 1: site name
-# 2: year
-# 3: month (not valid for year data)
-# 4: time unit
-$monthFileNameFormat = '{2:D4}-{3:D2} - {1} ({0}) - {4}.csv'                       
-$yearFileNameFormat  = '{2:D4} - {1} ({0}) - {4}.csv'
 
 #
 # Support functions (not exported)
@@ -45,6 +27,47 @@ function AddProperty
     )
 
     $Object | Add-Member NoteProperty -Name $PropertyName -Value $PropertyValue -Force
+}
+
+function PatternToFormat
+{
+    param(
+        [string] $pattern,
+        [object] $placeHolders
+    )
+
+    $percent = $false
+    $format  = ''
+
+    foreach ($c in $pattern.ToCharArray()) {
+        $char = $c.ToString()
+
+        if ($char -eq '%') {
+            if ($percent) {
+                $format += '%'
+                $percent = $false
+            } else {
+                $percent = $true
+            }
+        } else {
+            if ($percent) {
+                if ($placeHolders.ContainsKey($char)) {
+                    $format += "{$($placeHolders.$char[0])$($placeHolders.$char[1])}"
+                } else {
+                    throw "Invalid placeholder '$($char)'"
+                }
+                $percent = $false
+            } else {
+                $format += $char
+            }
+        }
+    }
+
+    if ($percent) {
+        $format += '%'
+    }
+
+    return $format
 }
 
 function ValueOrZero
@@ -194,33 +217,46 @@ function Export-SolarEdgeSiteEnergy
         .PARAMETER Site
         The SolarEdge Site ID (1+ characters 0-9).
         .PARAMETER Year
-        The year for which site energy data is exported (2000-2099). The default
-        value is the current year.
+        The year for which site energy data is exported. The default value is
+        the current year.
         .PARAMETER Month
-        The month for which site energy data is exported (1-12). If the month
-        is not specified, site energy data is exported for the whole year.
+        The month for which site energy data is exported. If the month is not
+        specified, site energy data is exported for the whole year.
         .PARAMETER TimeUnit
         The time granularity of the site energy data. DAY, WEEK, MONTH and YEAR
-        are  accepted when exporting data for a year. 15MIN, HOUR, DAY, WEEK and
-        MONTH are accepted When exporting data for a month. The default value
-        is DAY.
+        are accepted when exporting year data. 15MIN, HOUR, DAY, WEEK and MONTH
+        are accepted When exporting month data. The default value is DAY.
+        .PARAMETER OutFilePattern
+        The name pattern for the output file. The pattern can contain the following
+        placeholders:
+
+          %I  The SolarEdge site ID
+          %N  The SolarEdge site name
+          %Y  The calendar year (4 digits)
+          %M  The calendar month (01-12)
+          %U  The time unit
+          %%  Percent character
+
+        The default pattern for month data is '%N (%I) %Y-%M %U.csv'. The default
+        pattern for year data is '%N (%I) %Y %U.csv'.
         .LINK
         Get-SolarEdgeSiteEnergy
     #>
 
-    [CmdletBinding(DefaultParameterSetName='Year',PositionalBinding=$false)]
+    [CmdletBinding(PositionalBinding=$false)]
 
     param (
-        [Parameter(Mandatory,Position=0)]     [string] $ApiKey,
-        [Parameter(Mandatory,Position=1)]     [string] $Site,
-                                              [int]    $Year = [DateTime]::Now.Year,
-        [Parameter(ParameterSetName='Month')] [int]    $Month,
-                                              [string] $TimeUnit = 'DAY'
+        [Parameter(Mandatory,Position=0)] [string] $ApiKey,
+        [Parameter(Mandatory,Position=1)] [string] $Site,
+                                          [int]    $Year = [DateTime]::Now.Year,
+                                          [int]    $Month,
+                                          [string] $TimeUnit = 'DAY',
+                                          [string] $OutFilePattern
     )
     
     process {
-        if (($Year -lt $yearMin) -or ($Year -gt $yearMax)) {
-            throw "Year '$Year' is out of range ($yearMin-$yearMax)"
+        if (($Year -lt 1980) -or ($Year -gt 9999)) {
+            throw "Year '$Year' is out of range (1980-9999)"
         }
 
         # There is a flaw in the SolarEdge Monitoring API. In some cases data points
@@ -228,35 +264,63 @@ function Export-SolarEdgeSiteEnergy
         # are not. We therefore set the end date at the 1st day of the next year/month
         # and drop data points at the end date later. (RH 2025/10/05)
 
-        if ($PSCmdlet.ParameterSetName -eq 'Year') {
-            if ($yearTimeUnits -notcontains $TimeUnit) {
-                throw "Invalid time unit '$TimeUnit' for year data ($($yearTimeUnits -join ', '))"
+        if ($PSBoundParameters.ContainsKey('Month')) {
+            $timeSpan  = 'MONTH'
+            $timeUnits = '15MIN', 'QUARTER_OF_AN_HOUR', 'HOUR', 'DAY', 'MONTH'
+
+            if (($Month -lt 1) -or ($Month -gt 12)) {
+                throw "Month '$Month' is out of range (1-12)"
             }
-        
-            $startDate = [DateTime]::New($Year, 1, 1)
-            $endDate   = $startDate.AddYears(1)
-        } else {
-            if (($Month -lt $monthMin) -or ($Month -gt $monthMax)) {
-                throw "Month '$Month' is out of range ($monthMin-$monthMax)"
+            if ($timeUnits -notcontains $TimeUnit) {
+                throw "Invalid time unit '$TimeUnit' for month data ($($timeUnits -join ', '))"
             }
-            if ($monthTimeUnits -notcontains $TimeUnit) {
-                throw "Invalid time unit '$TimeUnit' for month data ($($monthTimeUnits -join ', '))"
-            }
+            $TimeUnit = $TimeUnit.ToUpper()
 
             $startDate = [DateTime]::New($Year, $Month, 1)
             $endDate   = $StartDate.AddMonths(1)
+
+            if (-not $PSBoundParameters.ContainsKey('OutFilePattern')) {
+                $OutFilePattern = '%N (%I) %Y-%M %U.csv'
+            }
+
+            $placeHolders = @{
+                'I' = (0, '')
+                'N' = (1, '')
+                'Y' = (2, ':D4')
+                'M' = (3, ':D2')
+                'U' = (4, '')
+            }
+
+            $outFileFormat = PatternToFormat $OutFilePattern $placeHolders
+        } else {
+            $Month     = 0
+            $timeSpan  = 'YEAR'
+            $timeUnits = 'DAY', 'MONTH', 'YEAR'
+
+            if ($timeUnits -notcontains $TimeUnit) {
+                throw "Invalid time unit '$TimeUnit' for year data ($($timeUnits -join ', '))"
+            }
+            $TimeUnit = $TimeUnit.ToUpper()
+    
+            $startDate = [DateTime]::New($Year, 1, 1)
+            $endDate   = $startDate.AddYears(1)
+
+            if (-not $PSBoundParameters.ContainsKey('OutFilePattern')) {
+                $OutFilePattern = '%N (%I) %Y %U.csv'
+            }
+
+            $placeHolders = @{
+                'I' = (0, '')
+                'N' = (1, '')
+                'Y' = (2, ':D4')
+                'U' = (4, '')
+            }
+
+            $outFileFormat = PatternToFormat $OutFilePattern $placeHolders
         }
-		
-        $TimeUnit = $TimeUnit.ToUpper()
 
         Write-Debug 'Download site details from monitoring platform'
         $details = (Get-SolarEdgeSiteDetails -ApiKey $ApiKey -Site $Site -ErrorAction Stop).siteDetails
-
-        if ($PSCmdlet.ParameterSetName -eq 'Year') {
-            $Outfile = $yearFileNameFormat  -f $Site, $details.name, $Year, 0,      $TimeUnit
-        } else {
-            $Outfile = $monthFileNameFormat -f $Site, $details.name, $Year, $Month, $TimeUnit
-        }
 
         Write-Debug 'Download site energy from monitoring platform'
         $energy = (Get-SolarEdgeSiteEnergy -ApiKey $ApiKey -Site $Site -StartDate $startDate -EndDate $endDate -TimeUnit $TimeUnit -ErrorAction Stop).siteEnergy
@@ -279,15 +343,18 @@ function Export-SolarEdgeSiteEnergy
             }
         }
 
-        Write-Verbose  "Time span   : $($PSCmdlet.ParameterSetName.ToUpper())"
+        $outFileName = $outFileFormat -f $Site, $details.name, $Year, $Month, $TimeUnit
+
+        Write-Verbose  "Site ID     : $Site"
+        Write-Verbose  "Site name   : $($details.name)"
+        Write-Verbose  "Time span   : $timeSpan"
         Write-Verbose ("Start date  : {0:yyyy}-{0:MM}-{0:dd}" -f $startDate)
         Write-Verbose ("End date    : {0:yyyy}-{0:MM}-{0:dd}" -f $endDate)
         Write-Verbose  "Time unit   : $TimeUnit"
-        Write-Verbose  "Site ID     : $Site"
-        Write-Verbose  "Output file : $Outfile"
+        Write-Verbose  "Output file : $outFileName"
 
         $csv = $values | ConvertTo-Csv -NoTypeInformation
-        [File]::WriteAllLines([Path]::Combine((Get-Location), $Outfile), $csv)
+        [System.IO.File]::WriteAllLines([System.IO.Path]::Combine((Get-Location), $outFileName), $csv)
     }
 }
 
