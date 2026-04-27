@@ -119,7 +119,8 @@ function Export-SolarEdgeInverterData
         [Parameter(Mandatory,Position=1)] [string]   $Site,
         [Parameter(Mandatory,Position=2)] [string]   $SerialNumber,
         [parameter(Mandatory,Position=3)] [DateTime] $StartDate,
-        [parameter(Mandatory,Position=4)] [DateTime] $EndDate
+        [parameter(Mandatory,Position=4)] [DateTime] $EndDate,
+                                          [string]   $OutFilePattern
     )
 
     process {
