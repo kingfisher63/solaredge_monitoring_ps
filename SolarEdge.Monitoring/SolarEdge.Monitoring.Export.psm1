@@ -227,7 +227,7 @@ function Export-SolarEdgeSiteEnergy
         are accepted when exporting year data. 15MIN, HOUR, DAY, WEEK and MONTH
         are accepted When exporting month data. The default value is DAY.
         .PARAMETER OutFilePattern
-        The name pattern for the output file. The pattern can contain the following
+        The output file name pattern. The pattern can contain the following
         placeholders:
 
           %I  The SolarEdge site ID
@@ -286,9 +286,9 @@ function Export-SolarEdgeSiteEnergy
             $placeHolders = @{
                 'I' = (0, '')
                 'N' = (1, '')
-                'Y' = (2, ':D4')
-                'M' = (3, ':D2')
-                'U' = (4, '')
+                'Y' = (2, ':yyyy')
+                'M' = (2, ':MM')
+                'U' = (3, '')
             }
 
             $outFileFormat = PatternToFormat $OutFilePattern $placeHolders
@@ -312,8 +312,8 @@ function Export-SolarEdgeSiteEnergy
             $placeHolders = @{
                 'I' = (0, '')
                 'N' = (1, '')
-                'Y' = (2, ':D4')
-                'U' = (4, '')
+                'Y' = (2, ':yyyy')
+                'U' = (3, '')
             }
 
             $outFileFormat = PatternToFormat $OutFilePattern $placeHolders
@@ -343,13 +343,13 @@ function Export-SolarEdgeSiteEnergy
             }
         }
 
-        $outFileName = $outFileFormat -f $Site, $details.name, $Year, $Month, $TimeUnit
+        $outFileName = $outFileFormat -f $Site, $details.name, $startDate, $TimeUnit
 
         Write-Verbose  "Site ID     : $Site"
         Write-Verbose  "Site name   : $($details.name)"
         Write-Verbose  "Time span   : $timeSpan"
-        Write-Verbose ("Start date  : {0:yyyy}-{0:MM}-{0:dd}" -f $startDate)
-        Write-Verbose ("End date    : {0:yyyy}-{0:MM}-{0:dd}" -f $endDate)
+        Write-Verbose ("Start date  : $($solarEdgeDateFormat)" -f $startDate)
+        Write-Verbose ("End date    : $($solarEdgeDateFormat)" -f $endDate)
         Write-Verbose  "Time unit   : $TimeUnit"
         Write-Verbose  "Output file : $outFileName"
 
