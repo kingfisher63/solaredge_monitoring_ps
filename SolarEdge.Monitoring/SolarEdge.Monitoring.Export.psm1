@@ -1,7 +1,5 @@
 # Copyright (C) 2025 Roger Hunen
 
-using namespace System.IO
-
 Set-StrictMode -Version 3.0
 
 # 0: date
@@ -285,7 +283,6 @@ function Export-SolarEdgeSiteEnergy
         # and drop data points at the end date later. (RH 2025/10/05)
 
         if ($PSBoundParameters.ContainsKey('Month')) {
-            $timeSpan  = 'MONTH'
             $timeUnits = '15MIN', 'QUARTER_OF_AN_HOUR', 'HOUR', 'DAY', 'MONTH'
 
             if (($Month -lt 1) -or ($Month -gt 12)) {
@@ -314,7 +311,6 @@ function Export-SolarEdgeSiteEnergy
             $outFileFormat = PatternToFormat $OutFilePattern $placeHolders
         } else {
             $Month     = 0
-            $timeSpan  = 'YEAR'
             $timeUnits = 'DAY', 'MONTH', 'YEAR'
 
             if ($timeUnits -notcontains $TimeUnit) {
@@ -367,7 +363,6 @@ function Export-SolarEdgeSiteEnergy
 
         Write-Verbose  "Site ID     : $Site"
         Write-Verbose  "Site name   : $($details.name)"
-        Write-Verbose  "Time span   : $timeSpan"
         Write-Verbose ("Start date  : $($solarEdgeDateFormat)" -f $startDate)
         Write-Verbose ("End date    : $($solarEdgeDateFormat)" -f $endDate)
         Write-Verbose  "Time unit   : $TimeUnit"
