@@ -7,13 +7,6 @@ Set-StrictMode -Version 3.0
 # 0: date
 $solarEdgeDateFormat = '{0:yyyy}-{0:MM}-{0:dd}'
 
-# Export-SolarEdgeInverterData
-#
-# 0: site ID
-# 1: inverter serial number
-# 2: date
-$inverterFileNameFormat = '{2:yyyy}{2:MM}{2:dd} {1} ({0}).csv'
-
 #
 # Support functions (not exported)
 #
@@ -104,6 +97,19 @@ function Export-SolarEdgeInverterData
         The start date.
         .PARAMETER EndDate
         The end date.
+        .PARAMETER OutFilePattern
+        The output file name pattern. The pattern can contain the following
+        placeholders:
+
+          %I  The SolarEdge site ID
+          %S  The inverter serial number
+          %Y  The calendar year (4 digits)
+          %M  The calendar month (01-12)
+          %D  The calendar day (01-31)
+          %J  The day of year (000-366)
+          %%  Percent character
+
+        The default pattern for month data is '%I %S %Y-%M-%D.csv'.
         .LINK
         Get-SolarEdgeInverterData
     #>
@@ -120,11 +126,11 @@ function Export-SolarEdgeInverterData
 
     process {
         if ($StartDate.Hour -ne 0 -or $StartDate.Minute -ne 0 -or $StartDate.Second -ne 0 -or $StartDate.Millisecond -ne 0) {
-        	throw [ArgumentException]::New('Start date has a non-zero time component.', 'StartDate')
+            throw [ArgumentException]::New('Start date has a non-zero time component.', 'StartDate')
         }
 
         if ($EndDate.Hour -ne 0 -or $EndDate.Minute -ne 0 -or $EndDate.Second -ne 0 -or $EndDate.Millisecond -ne 0) {
-        	throw [ArgumentException]::New('End date has a non-zero time component.', 'EndDate')
+            throw [ArgumentException]::New('End date has a non-zero time component.', 'EndDate')
         }
 
         if ($EndDate -lt $StartDate) {
@@ -134,20 +140,36 @@ function Export-SolarEdgeInverterData
         $totalDays      = ($EndDate - $StartDate).TotalDays
         $queryStartDate = $StartDate
 
-        Write-Verbose "Site ID     : $Site"
-        Write-Verbose "Start date  : $($solarEdgeDateFormat -f $StartDate)"
-        Write-Verbose "Days        : $totalDays"
+        if (-not $PSBoundParameters.ContainsKey('OutFilePattern')) {
+            $OutFilePattern = '%I %S %Y-%M-%D.csv'
+        }
+
+        $placeHolders = @{
+            'I' = (0, '')
+            'S' = (1, '')
+            'Y' = (2, ':yyyy')
+            'M' = (2, ':MM')
+            'D' = (2, ':dd')
+            'J' = (3, ':D3')
+        }
+
+        $outFileFormat = PatternToFormat $OutFilePattern $placeHolders
+
+        Write-Verbose "Site ID       : $Site"
+        Write-Verbose "Serial number : $SerialNumber"
+        Write-Verbose "Start date    : $($solarEdgeDateFormat -f $StartDate)"
+        Write-Verbose "Days          : $totalDays"
 
         while ($totalDays -gt 0) {
             $queryDays    = if ($totalDays -lt 7 ) { $totalDays } else { 7 }
-        	$queryEndDate = $queryStartDate.AddDays($queryDays)
+            $queryEndDate = $queryStartDate.AddDays($queryDays)
 
-            $inverterData = (Get-SolarEdgeInverterData $apiKey $site $serialNumber $queryStartDate $queryEndDate -ErrorAction Stop).inverterData
+            $inverterData = (Get-SolarEdgeInverterData $apiKey $site $SerialNumber $queryStartDate $queryEndDate -ErrorAction Stop).inverterData
 
-	        Write-Verbose "Start date  : $($solarEdgeDateFormat -f $queryStartDate)"
-	        Write-Verbose "End date    : $($solarEdgeDateFormat -f $queryEndDate)"
-            Write-Verbose "Query days  : $queryDays"
-            Write-Verbose "Data points : $($inverterData.telemetries.Count)"
+            Write-Verbose "Query start   : $($solarEdgeDateFormat -f $queryStartDate)"
+            Write-Verbose "Query end     : $($solarEdgeDateFormat -f $queryEndDate)"
+            Write-Verbose "Query days    : $queryDays"
+            Write-Verbose "Data points   : $($inverterData.telemetries.Count)"
 
             if ($inverterData.telemetries.Count -eq 0) {
                 break
@@ -156,7 +178,6 @@ function Export-SolarEdgeInverterData
             for ($day=0; $day -lt $queryDays; $day++) {
                 $date    = $queryStartDate.AddDays($day)
                 $dateStr = $solarEdgeDateFormat -f $date
-                $outFile = $inverterFileNameFormat -f $Site, $SerialNumber, $date
 
                 $telemetries = $inverterData.telemetries | Where-Object { ([DateTime]$_.date).Date -eq $date }
                 if ($null -eq $telemetries) {
@@ -184,20 +205,19 @@ function Export-SolarEdgeInverterData
                             AddProperty $outItem "${phase}_acCurrent"     $telemetry.$phaseDataProperty.acCurrent
                             AddProperty $outItem "${phase}_acVoltage"     $telemetry.$phaseDataProperty.acVoltage
                             AddProperty $outItem "${phase}_acFrequency"   $telemetry.$phaseDataProperty.acFrequency
-                            AddProperty $outItem "${phase}_apparentPower" $telemetry.$phaseDataProperty.apparentPower
                             AddProperty $outItem "${phase}_activePower"   $telemetry.$phaseDataProperty.activePower
-                            AddProperty $outItem "${phase}_reactivePower" $telemetry.$phaseDataProperty.reactivePower
-                            AddProperty $outItem "${phase}_cosPhi"        $telemetry.$phaseDataProperty.cosPhi
                         }
                     }
 
                     $outItems += $outItem
                 }
 
-                Write-Verbose ("{0}  : {1,3} -> {2}" -f $dateStr, $telemetries.Count, $outFile)
+                $outFileName = $outFileFormat -f $Site, $SerialNumber, $date, $date.DayOfYear
+
+                Write-Verbose ("{0}  : {1,3} -> {2}" -f $dateStr, $telemetries.Count, $outFileName)
 
                 $csv = $outItems | ConvertTo-Csv -NoTypeInformation
-                [File]::WriteAllLines([Path]::Combine((Get-Location), $Outfile), $csv)
+                [System.IO.File]::WriteAllLines([System.IO.Path]::Combine((Get-Location), $outFileName), $csv)
             }
 
             $queryStartDate = $queryEndDate
