@@ -233,7 +233,7 @@ function ValidateDateTimePeriod
     }
 
     if ($EndDateTime -gt $limitDateTime) {
-        throw [ArgumentOutOfRangeException]::New("$StartDateParam/$EndDateParam", "Too many days between $StartDateParam and $EndDateParam (max. $(($limitDateTime - $StartDateTime).TotalDays))")
+        throw [ArgumentOutOfRangeException]::New("$StartDateTimeParam/$EndDateTimeParam", "Too many days between $StartDateTimeParam and $EndDateTimeParam (max. $(($limitDateTime - $StartDateTime).TotalDays))")
     }
 }
 
