@@ -99,10 +99,10 @@ function Write-SolarEdgeMeterData
 
             foreach ($_meter in $_meterData.meterData.meters) {
                 $dateColumn               = [System.Data.DataColumn]::new('Date')
-                $dateColumn.DataType      = [System.Type]::GetType('System.String')
+                $dateColumn.DataType      = [System.String]
 
                 $valueColumn              = [System.Data.DataColumn]::new($_meter.meterType)
-                $valueColumn.DataType     = [System.Type]::GetType('System.String')
+                $valueColumn.DataType     = [System.String]
                 $valueColumn.DefaultValue = ''
 
                 $meterTable               = [System.Data.DataTable]::new()
@@ -295,10 +295,10 @@ function Write-SolarEdgeSiteEnergy
             }
 
             $dateColumn           = [System.Data.DataColumn]::new('Date')
-            $dateColumn.DataType  = [System.Type]::GetType('System.String')
+            $dateColumn.DataType  = [System.String]
 
             $valueColumn          = [System.Data.DataColumn]::new('Value')
-            $valueColumn.DataType = [System.Type]::GetType('System.String')
+            $valueColumn.DataType = [System.String]
 
             $energyTable      = [System.Data.DataTable]::new()
             $energyTable.Columns.Add($dateColumn)
@@ -374,10 +374,10 @@ function Write-SolarEdgeSiteEnergyDetails
 
                 if ($meterHasData) {
                     $dateColumn               = [System.Data.DataColumn]::new('Date')
-                    $dateColumn.DataType      = [System.Type]::GetType('System.String')
+                    $dateColumn.DataType      = [System.String]
 
                     $valueColumn              = [System.Data.DataColumn]::new($_meter.type)
-                    $valueColumn.DataType     = [System.Type]::GetType('System.String')
+                    $valueColumn.DataType     = [System.String]
                     $valueColumn.DefaultValue = ''
 
                     $meterTable               = [System.Data.DataTable]::new()
@@ -676,10 +676,10 @@ function Write-SolarEdgeSitePower
             }
 
             $dateColumn           = [System.Data.DataColumn]::new('Date')
-            $dateColumn.DataType  = [System.Type]::GetType('System.String')
+            $dateColumn.DataType  = [System.String]
 
             $valueColumn          = [System.Data.DataColumn]::new('Value')
-            $valueColumn.DataType = [System.Type]::GetType('System.String')
+            $valueColumn.DataType = [System.String]
 
             $powerTable       = [System.Data.DataTable]::new()
             $powerTable.Columns.Add($dateColumn)
@@ -757,10 +757,10 @@ function Write-SolarEdgeSitePowerDetails
 
                 if ($meterHasData) {
                     $dateColumn               = [System.Data.DataColumn]::new('Date')
-                    $dateColumn.DataType      = [System.Type]::GetType('System.String')
+                    $dateColumn.DataType      = [System.String]
 
                     $valueColumn              = [System.Data.DataColumn]::new($_meter.type)
-                    $valueColumn.DataType     = [System.Type]::GetType('System.String')
+                    $valueColumn.DataType     = [System.String]
                     $valueColumn.DefaultValue = ''
 
                     $meterTable               = [System.Data.DataTable]::new()

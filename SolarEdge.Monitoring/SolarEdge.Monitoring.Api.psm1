@@ -7,7 +7,6 @@
 # See the GNU General Public License for more details.
 
 using namespace System.Management.Automation
-using namespace System.Text
 
 Set-StrictMode -Version 3.0
 
@@ -42,7 +41,7 @@ function GetApiData
     param (
         [String]    $RelativeUrl,
         [String]    $ApiKey,
-        [Hashtable] $QueryParams
+        [hashtable] $QueryParams
     )
 
     $url = "https://${monitoringApiServer}${RelativeUrl}?api_key=${Apikey}"
@@ -54,7 +53,7 @@ function GetApiData
     }
 
     $json = (Invoke-WebRequest -UseBasicParsing $url).RawContentStream.ToArray()
-    $data = [Encoding]::UTF8.GetString($json) | ConvertFrom-Json
+    $data = [System.Text.Encoding]::UTF8.GetString($json) | ConvertFrom-Json
 
     return $data
 }
