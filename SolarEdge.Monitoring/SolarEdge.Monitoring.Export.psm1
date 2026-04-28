@@ -9,17 +9,6 @@ $solarEdgeDateFormat = '{0:yyyy}-{0:MM}-{0:dd}'
 # Support functions (not exported)
 #
 
-function AddProperty
-{
-    param (
-        [PSCustomObject] $Object,
-        [String]         $PropertyName,
-        [String]         $PropertyValue
-    )
-
-    $Object | Add-Member NoteProperty -Name $PropertyName -Value $PropertyValue -Force
-}
-
 function PatternToFormat
 {
     param(
@@ -59,20 +48,6 @@ function PatternToFormat
     }
 
     return $format
-}
-
-function ValueOrZero
-{
-    param(
-        [Object] $Object,
-        [String] $PropertyName
-    )
-
-    if ($Object | Get-Member -Name $PropertyName) {
-        return $Object.$PropertyName
-    } else {
-        return [Decimal]'0.0'
-    }
 }
 
 #
@@ -122,6 +97,54 @@ function Export-SolarEdgeInverterData
         [parameter(Mandatory,Position=4)] [DateTime] $EndDate,
                                           [string]   $OutFilePattern
     )
+
+    begin {
+        function FillDataRow
+        {
+            param (
+                [System.Data.DataRow] $dataRow,
+                [PSCustomObject]      $object,
+                [int]                 $level,
+                [string]              $prefix
+            )
+
+            process {
+                foreach ($property in ($object | Get-Member -Type NoteProperty)) {
+                    $columnName   = "${prefix}$($property.Name)"
+                    $propertyType = ($property.Definition -split ' ')[0];
+
+                    if ($propertyType -eq 'System.Management.Automation.PSCustomObject') {
+                        FillDataRow $dataRow $object.($property.Name) ($level+1) "${columnName}_"
+                    } else {
+                        $dataRow[${columnName}] = $object.($property.Name)
+                    }
+                }
+            }
+        }
+
+        function GetColumns
+        {
+            param (
+                [hashtable]      $columns,
+                [PSCustomObject] $object,
+                [int]            $level,
+                [string]         $prefix
+            )
+
+            process {
+                foreach ($property in ($object | Get-Member -Type NoteProperty)) {
+                    $columnName   = "${prefix}$($property.Name)"
+                    $propertyType = ($property.Definition -split ' ')[0];
+
+                    if ($propertyType -eq 'System.Management.Automation.PSCustomObject') {
+                        GetColumns $columns $object.($property.Name) ($level+1) "${columnName}_"
+                    } else {
+                        $columns["${level}:${columnName}"] = $propertyType
+                    }
+                }
+            }
+        }
+    }
 
     process {
         if ($StartDate.Hour -ne 0 -or $StartDate.Minute -ne 0 -or $StartDate.Second -ne 0 -or $StartDate.Millisecond -ne 0) {
@@ -183,40 +206,44 @@ function Export-SolarEdgeInverterData
                     continue
                 }
 
-                $outItems = @()
+                # Collect column names
+
+                $columns = @{}
                 foreach ($telemetry in $telemetries) {
-                    $outItem = [PSCustomObject]@{
-                        date                  = $telemetry.date
-                        totalActivePower      = $telemetry.totalActivePower
-                        dcVoltage             = ValueOrZero $telemetry dcVoltage
-                        groundFaultResistance = ValueOrZero $telemetry groundFaultResistance
-                        powerLimit            = $telemetry.powerLimit
-                        totalEnergy           = $telemetry.totalEnergy
-                        temperature           = $telemetry.temperature
-                        inverterMode          = $telemetry.inverterMode
-                        operationMode         = $telemetry.operationMode
-                    }
-
-                    foreach ($phase in 'L1','L2','L3') {
-                        $phaseDataProperty = "${phase}Data"
-
-                        if ($telemetry | Get-Member -Name $phaseDataProperty) {
-                            AddProperty $outItem "${phase}_acCurrent"     $telemetry.$phaseDataProperty.acCurrent
-                            AddProperty $outItem "${phase}_acVoltage"     $telemetry.$phaseDataProperty.acVoltage
-                            AddProperty $outItem "${phase}_acFrequency"   $telemetry.$phaseDataProperty.acFrequency
-                            AddProperty $outItem "${phase}_activePower"   $telemetry.$phaseDataProperty.activePower
-                        }
-                    }
-
-                    $outItems += $outItem
+                    GetColumns $columns $telemetry 0 ''
                 }
+
+                # Create data table
+
+                $table = [System.Data.DataTable]::new()
+
+                foreach ($key in ($columns.Keys | Sort-Object)) {
+                    $column = [System.Data.DataColumn]::new(($key -split ':')[1])
+
+                    switch ($columns[$key]) {
+                        'decimal' { $column.DataType = [System.Decimal]; $column.DefaultValue = 0  }
+                        'double'  { $column.DataType = [System.Double];  $column.DefaultValue = 0  }
+                        'int'     { $column.DataType = [System.Int32];   $column.DefaultValue = 0  }
+                        default   { $column.DataType = [System.String];  $column.DefaultValue = '' }
+                    }
+
+                    $table.Columns.Add($column)
+                }
+
+                # Add data rows
+
+                foreach ($telemetry in $telemetries) {
+                    $row = $table.NewRow()
+                    FillDataRow $row $telemetry 0 ''
+                    $table.Rows.Add($row)
+                }
+
+                # Export to CSV file
 
                 $outFileName = $outFileFormat -f $Site, $SerialNumber, $date, $date.DayOfYear
 
-                Write-Verbose ("{0}  : {1,3} -> {2}" -f $dateStr, $telemetries.Count, $outFileName)
-
-                $csv = $outItems | ConvertTo-Csv -NoTypeInformation
-                [System.IO.File]::WriteAllLines([System.IO.Path]::Combine((Get-Location), $outFileName), $csv)
+                Write-Verbose ('{0}    : {1,-3} -> {2}' -f $dateStr, $telemetries.Count, $outFileName)
+                $table | Export-Csv -Path $outFileName -NoTypeInformation
             }
 
             $queryStartDate = $queryEndDate
