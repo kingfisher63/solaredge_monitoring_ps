@@ -3,13 +3,13 @@
 This repository contains Windows PowerShell modules with functions to query the [SolarEdge Monitoring API](https://knowledge-center.solaredge.com/sites/kc/files/se_monitoring_api.pdf). The functions are grouped into two PowerShell modules
 
 + SolarEdge.Monitoring
-+ SolarEdge.Monitoring.Export
 
 ## Module SolarEdge.Monitoring
 
 SolarEdge.Monitoring has two nested modules
 
 + **SolarEdge.Monitoring.Api** contains functions to query the SolarEdge Monitoring API.
++ **SolarEdge.Monitoring.Export** contains function to export selected data to CSV files.
 + **SolarEdge.Monitoring.Util** contains functions to produce human readable text from data retrieved with a *SolarEdge.Monitoring.Api* function.
 
 ### Installation
