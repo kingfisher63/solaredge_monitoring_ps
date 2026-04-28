@@ -1,4 +1,4 @@
-# Copyright (C) 2025 Roger Hunen
+# Copyright (C) 2025-2026 Roger Hunen
 
 Set-StrictMode -Version 3.0
 
