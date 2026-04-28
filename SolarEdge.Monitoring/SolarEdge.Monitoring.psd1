@@ -36,6 +36,7 @@
         'Get-SolarEdgeSitePowerDetails'
         'Get-SolarEdgeSitePowerFlow'
         'Get-SolarEdgeStorageData'
+        'Write-SolarEdgeMeterData'
         'Write-SolarEdgeSiteDataPeriod'
         'Write-SolarEdgeSiteDetails'
         'Write-SolarEdgeSiteEnergy'
