@@ -399,5 +399,3 @@ function Export-SolarEdgeSiteEnergy
         $values | Export-Csv -Path $outFileName -NoTypeInformation
     }
 }
-
-Export-ModuleMember -Function Export-SolarEdgeInverterData, Export-SolarEdgeSiteEnergy
