@@ -396,7 +396,7 @@ function Export-SolarEdgeSiteEnergy
         Write-Verbose  "Time unit   : $TimeUnit"
         Write-Verbose  "Output file : $outFileName"
 
-        $values | Export-Csv Path $outFileName -NoTypeInformation
+        $values | Export-Csv -Path $outFileName -NoTypeInformation
     }
 }
 
