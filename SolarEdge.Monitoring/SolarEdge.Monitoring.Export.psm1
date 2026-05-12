@@ -58,8 +58,8 @@ function Export-SolarEdgeInverterData
 {
     <#
         .SYNOPSIS
-        Gets inverter technical data from the SolarEdge monitoring platform and
-        writes it to a CSV file.
+        Gets inverter technical data from the SolarEdge monitoring platform and writes
+        it to CSV files (1 file per day).
         .PARAMETER ApiKey
         The SolarEdge API key (32 characters 0-9 or A-Z).
         .PARAMETER Site
@@ -71,8 +71,7 @@ function Export-SolarEdgeInverterData
         .PARAMETER EndDate
         The end date.
         .PARAMETER OutFilePattern
-        The output file name pattern. The pattern can contain the following
-        placeholders:
+        The output file name pattern. The pattern can contain the following placeholders:
 
           %I  The SolarEdge site ID
           %S  The inverter serial number
@@ -82,7 +81,7 @@ function Export-SolarEdgeInverterData
           %J  The day of year (000-366)
           %%  Percent character
 
-        The default pattern for month data is '%I %S %Y-%M-%D.csv'.
+        The default pattern is '%I %S %Y-%M-%D.csv'.
         .LINK
         Get-SolarEdgeInverterData
     #>
@@ -256,25 +255,24 @@ function Export-SolarEdgeSiteEnergy
 {
     <#
         .SYNOPSIS
-        Gets site energy data from the SolarEdge monitoring platform and writes
-        it to a CSV file.
+        Gets site energy data from the SolarEdge monitoring platform and writes it to
+        a CSV file.
         .PARAMETER ApiKey
         The SolarEdge API key (32 characters 0-9 or A-Z).
         .PARAMETER Site
         The SolarEdge Site ID (1+ characters 0-9).
         .PARAMETER Year
-        The year for which site energy data is exported. The default value is
-        the current year.
+        The year for which site energy data is exported. The default value is the
+        current year.
         .PARAMETER Month
-        The month for which site energy data is exported. If the month is not
-        specified, site energy data is exported for the whole year.
+        The month for which site energy data is exported. If the month is not specified,
+        site energy data is exported for the whole year.
         .PARAMETER TimeUnit
         The time granularity of the site energy data. DAY, WEEK, MONTH and YEAR
         are accepted when exporting year data. 15MIN, HOUR, DAY, WEEK and MONTH
         are accepted When exporting month data. The default value is DAY.
         .PARAMETER OutFilePattern
-        The output file name pattern. The pattern can contain the following
-        placeholders:
+        The output file name pattern. The pattern can contain the following placeholders:
 
           %I  The SolarEdge site ID
           %N  The SolarEdge site name
