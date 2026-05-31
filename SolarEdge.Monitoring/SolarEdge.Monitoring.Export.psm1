@@ -283,8 +283,8 @@ function Export-SolarEdgeSiteEnergy
           %U  The time unit
           %%  Percent character
 
-        The default pattern for month data is '%N (%I) %Y-%M %U.csv'. The default
-        pattern for year data is '%N (%I) %Y %U.csv'.
+        The default pattern for month data is 'Site energy %N (%I) %Y-%M %U.csv'.
+        The default pattern for year data is 'Site energy %N (%I) %Y %U.csv'.
         .LINK
         Get-SolarEdgeSiteEnergy
     #>
@@ -300,6 +300,27 @@ function Export-SolarEdgeSiteEnergy
                                           [string] $OutFilePattern
     )
     
+    begin {
+        $placeHoldersMonth = @{
+            'I' = (0, '')
+            'N' = (1, '')
+            'Y' = (2, ':yyyy')
+            'M' = (2, ':MM')
+            'U' = (3, '')
+        }
+
+        $defaultOutFilePatternMonth = 'Site energy %N (%I) %Y-%M %U.csv'
+
+        $placeHoldersYear = @{
+            'I' = (0, '')
+            'N' = (1, '')
+            'Y' = (2, ':yyyy')
+            'U' = (3, '')
+        }
+
+        $defaultOutFilePatternYear  = 'Site energy %N (%I) %Y %U.csv'
+    }
+
     process {
         if (($Year -lt 1980) -or ($Year -gt 9999)) {
             throw "Year '$Year' is out of range (1980-9999)"
@@ -325,18 +346,10 @@ function Export-SolarEdgeSiteEnergy
             $endDate   = $StartDate.AddMonths(1)
 
             if (-not $PSBoundParameters.ContainsKey('OutFilePattern')) {
-                $OutFilePattern = '%N (%I) %Y-%M %U.csv'
+                $OutFilePattern = $defaultOutFilePatternMonth
             }
 
-            $placeHolders = @{
-                'I' = (0, '')
-                'N' = (1, '')
-                'Y' = (2, ':yyyy')
-                'M' = (2, ':MM')
-                'U' = (3, '')
-            }
-
-            $outFileFormat = PatternToFormat $OutFilePattern $placeHolders
+            $outFileFormat = PatternToFormat $OutFilePattern $placeHoldersMonth
         } else {
             $Month     = 0
             $timeUnits = 'DAY', 'MONTH', 'YEAR'
@@ -350,17 +363,10 @@ function Export-SolarEdgeSiteEnergy
             $endDate   = $startDate.AddYears(1)
 
             if (-not $PSBoundParameters.ContainsKey('OutFilePattern')) {
-                $OutFilePattern = '%N (%I) %Y %U.csv'
+                $OutFilePattern = $defaultOutFilePatternYear
             }
 
-            $placeHolders = @{
-                'I' = (0, '')
-                'N' = (1, '')
-                'Y' = (2, ':yyyy')
-                'U' = (3, '')
-            }
-
-            $outFileFormat = PatternToFormat $OutFilePattern $placeHolders
+            $outFileFormat = PatternToFormat $OutFilePattern $placeHoldersYear
         }
 
         Write-Debug 'Download site details from monitoring platform'
