@@ -81,7 +81,7 @@ function Export-SolarEdgeInverterData
           %J  The day of year (000-366)
           %%  Percent character
 
-        The default pattern is '%I %S %Y-%M-%D.csv'.
+        The default pattern is 'Inverter data %S %Y-%M-%D.csv'.
         .LINK
         Get-SolarEdgeInverterData
     #>
@@ -143,6 +143,17 @@ function Export-SolarEdgeInverterData
                 }
             }
         }
+
+        $placeHolders = @{
+            'I' = (0, '')
+            'S' = (1, '')
+            'Y' = (2, ':yyyy')
+            'M' = (2, ':MM')
+            'D' = (2, ':dd')
+            'J' = (3, ':D3')
+        }
+
+        $defaultOutFilePattern = 'Inverter data %S %Y-%M-%D.csv'
     }
 
     process {
@@ -162,16 +173,7 @@ function Export-SolarEdgeInverterData
         $queryStartDate = $StartDate
 
         if (-not $PSBoundParameters.ContainsKey('OutFilePattern')) {
-            $OutFilePattern = '%I %S %Y-%M-%D.csv'
-        }
-
-        $placeHolders = @{
-            'I' = (0, '')
-            'S' = (1, '')
-            'Y' = (2, ':yyyy')
-            'M' = (2, ':MM')
-            'D' = (2, ':dd')
-            'J' = (3, ':D3')
+            $OutFilePattern = $defaultOutFilePattern
         }
 
         $outFileFormat = PatternToFormat $OutFilePattern $placeHolders
