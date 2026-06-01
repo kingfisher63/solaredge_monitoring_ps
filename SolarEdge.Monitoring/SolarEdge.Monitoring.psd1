@@ -8,7 +8,7 @@
 
 @{
     GUID              = '7781f6a2-721e-4de1-88f2-f1c4b4a9e31c'
-    ModuleVersion     = '2.0.1'
+    ModuleVersion     = '2.0.2'
     Author            = 'Roger Hunen'
     CompanyName       = 'Roger Hunen'
     Copyright         = '(c) 2025-2026 Roger Hunen. All rights reserved.'
