@@ -1,3 +1,7 @@
+# Deprecation notice
+
+The scripts is this repository target the SolarEdge Monitoring API V1. The monitoring API V1 is currently planned for deprecation on November 1, 2026.
+
 # SolarEdge Monitoring API for Windows PowerShell
 
 This repository contains Windows PowerShell modules with functions to query the [SolarEdge Monitoring API](https://knowledge-center.solaredge.com/sites/kc/files/se_monitoring_api.pdf). The functions are grouped into two PowerShell modules
